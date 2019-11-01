@@ -34,3 +34,18 @@ glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
 ```
 
+```{r}
+selectedVarAllDataPatient <- allDataPatientStudyDS %>%
+  select("Group")
+
+selectedVarAllDataPatient
+```
+
+
+```{r}
+selectedVarPDGroupsStudy <- allDataPDGroupsStudyDS %>%
+  select("Group")
+
+selectedVarAllDataPatient
+```
+
