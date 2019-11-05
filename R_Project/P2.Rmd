@@ -33,10 +33,13 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
 ```
+```{r}
+variable.names(allDataPatientStudyDS)
+```
 
 ```{r}
 selectedVarAllDataPatient <- allDataPatientStudyDS %>%
-  select("Group")
+  select("Group","Age", "Medication", "Length_Parkinson","H_Y", "Handedness",)
 
 selectedVarAllDataPatient
 ```
@@ -44,7 +47,7 @@ selectedVarAllDataPatient
 
 ```{r}
 selectedVarPDGroupsStudy <- allDataPDGroupsStudyDS %>%
-  select("Group")
+  select("Group", "Age")
 
 selectedVarAllDataPatient
 ```
