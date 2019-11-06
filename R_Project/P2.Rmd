@@ -38,17 +38,41 @@ variable.names(allDataPatientStudyDS)
 ```
 
 ```{r}
-selectedVarAllDataPatient <- allDataPatientStudyDS %>%
-  select("Group","Age", "Medication", "Length_Parkinson","H_Y", "Handedness",)
+#Table 1
+Table1_allDataPDGroups <- allDataPDGroupsStudyDS %>%
+select("Group","Age", "Medication", "Length_Parkinson","H_Y", "Handedness")
 
-selectedVarAllDataPatient
+selectedVarallDataPDGroups
+skimr::skim(selectedVarallDataPDGroups)
 ```
 
 
 ```{r}
-selectedVarPDGroupsStudy <- allDataPDGroupsStudyDS %>%
-  select("Group", "Age")
+#Table 2
 
-selectedVarAllDataPatient
+Table2_AllDataPatient <- allDataPatientStudyDS %>%
+  group_by(Group)%>%
+select("Age", "Sex", "Handedness","MMSE","RAVEN")
+
+Table2_AllDataPatient
+skimr::skim(Table2_AllDataPatient)
+
+Table2_AllDataPatient%>%
+  group_by(Group)%>%
+  count(Sex=="1")
+
+
+  
+
+
 ```
+
+
+
+
+
+
+
+
+
 
