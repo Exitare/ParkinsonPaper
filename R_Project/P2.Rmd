@@ -59,7 +59,7 @@ skimr::skim(Table1_AllDataPatient)
 
 
 ```{r}
-#Table 2 using allDataPatientStudyDS
+#Table 3 using allDataPatientStudyDS
 
 Table2_AllDataPatient <- allDataPatientStudyDS %>%
   group_by(Group)%>%
@@ -79,7 +79,7 @@ Table2_AllDataPatient%>%
 ```
 
 ```{r}
-#Table 3 using allDataPatientStudyDS
+#Table 4 using allDataPatientStudyDS
 Table3_AllDataPatient <- allDataPatientStudyDS %>%
   group_by(Group)%>%
 select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm","NPro_Dur_Ruis")
