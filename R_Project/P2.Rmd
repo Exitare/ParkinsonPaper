@@ -38,7 +38,7 @@ variable.names(allDataPatientStudyDS)
 ```
 
 ```{r}
-#Table 1
+#Table 1 recreated using allDataPDGroupsStudyDS dataframe
 Table1_allDataPDGroups <- allDataPDGroupsStudyDS %>%
 select("Age", "Medication", "Length_Parkinson","H_Y")
 
@@ -46,6 +46,7 @@ selectedVarallDataPDGroups
 skimr::skim(selectedVarallDataPDGroups)
 ```
 ```{r}
+#Table 1 recreated using allDataPatientStudyDS dataframe
 Table1_AllDataPatient <- allDataPatientStudyDS %>%
   filter(Group == "1")%>%
 select("Group","Age", "Medication", "Length_Parkinson","H_Y")
@@ -58,7 +59,7 @@ skimr::skim(selectedVarallDataPDGroups)
 
 
 ```{r}
-#Table 2
+#Table 2 using allDataPatientStudyDS
 
 Table2_AllDataPatient <- allDataPatientStudyDS %>%
   group_by(Group)%>%
