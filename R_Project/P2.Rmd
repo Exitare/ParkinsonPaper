@@ -37,62 +37,20 @@ glimpse(allDataPDGroupsStudyDS)
 variable.names(allDataPatientStudyDS)
 ```
 
-```{r}
-#Table 1 recreated using allDataPDGroupsStudyDS dataframe
-Table1_allDataPDGroups <- allDataPDGroupsStudyDS %>%
-select("Age", "Medication", "Length_Parkinson","H_Y")
-
-Table1_allDataPDGroups
-skimr::skim(Table1_allDataPDGroups)
-```
-```{r}
-#Table 1 recreated using allDataPatientStudyDS dataframe
-Table1_AllDataPatient <- allDataPatientStudyDS %>%
-  filter(Group == "1")%>%
-select("Group","Age", "Medication", "Length_Parkinson","H_Y")
-
-
-Table1_AllDataPatient
-skimr::skim(Table1_AllDataPatient)
-```
-
-
+## Codebook
 
 ```{r}
-#Table 3 using allDataPatientStudyDS
-
-Table2_AllDataPatient <- allDataPatientStudyDS %>%
-  group_by(Group)%>%
-select("Age", "Sex", "Handedness","MMSE","RAVEN")
-
-Table2_AllDataPatient
-skimr::skim(Table2_AllDataPatient)
-
-Table2_AllDataPatient%>%
-  group_by(Group)%>%
-  count(Sex=="1")
-
-
-  
-
+library(codebook)
+library(igraph)
 
 ```
-
-```{r}
-#Table 4 using allDataPatientStudyDS
-Table3_AllDataPatient <- allDataPatientStudyDS %>%
-  group_by(Group)%>%
-select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm","NPro_Dur_Ruis")
-Table3_AllDataPatient
-skimr::skim(Table3_AllDataPatient)
-
-```
-
-
-
-
-
-
-
-
-
+Age - age of participant in whole years
+Length_Parkinson - duration of disease in years for each patient
+Medication - Levodopa equivalent, rounded to nearest 50
+H_Y - Hoehn Yahr
+Sex - biological sex of patient
+Handedness - whether the patient is right or left handed
+MMSE - mini mental state examination
+RAVEN - Raven's Progressive Matrices
+Phonologic_Fluency - interger representation of a component a verbal fuency test
+Semantic_Fluency - interger representation of a component a verbal fuency test
