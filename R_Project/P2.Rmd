@@ -40,11 +40,21 @@ variable.names(allDataPatientStudyDS)
 ```{r}
 #Table 1
 Table1_allDataPDGroups <- allDataPDGroupsStudyDS %>%
-select("Group","Age", "Medication", "Length_Parkinson","H_Y", "Handedness")
+select("Age", "Medication", "Length_Parkinson","H_Y")
 
 selectedVarallDataPDGroups
 skimr::skim(selectedVarallDataPDGroups)
 ```
+```{r}
+Table1_AllDataPatient <- allDataPatientStudyDS %>%
+  filter(Group == "1")%>%
+select("Group","Age", "Medication", "Length_Parkinson","H_Y")
+
+
+selectedVarallDataPDGroups
+skimr::skim(selectedVarallDataPDGroups)
+```
+
 
 
 ```{r}
