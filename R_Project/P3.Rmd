@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(haven)
 library(dplyr)
 library(tidyr)
+library(ggplot2)
 ```
  
 
@@ -104,7 +105,11 @@ Table9_AllDataPatient
 ```{r}
 Fig1_table <- allDataPatientStudyDS %>% 
   group_by(Group)%>% 
-  select
+  select("Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N") %>%
+  mutate(Total_Nrm_Sem_Rep=sum(Nrm_Sem_Rep), Total_Norm_ErrorsRepaired=sum(Norm_ErrorsRepaired), Total_TotalErrorsNorm_N = sum(TotalErrorsNorm_N), perc_Nrm_Sem_Rep = Total_Nrm_Sem_Rep / Total_TotalErrorsNorm_N, perc_Nrm_Total_Rep = Total_Norm_ErrorsRepaired/Total_TotalErrorsNorm_N,Total_Nois_Sem_Rep = sum(Nois_Sem_Rep),Total_Noise_ErrorsRepaired=sum(Noise_ErrorsRepaired),Total_TotalErrorsNois_N = sum(TotalErrorsNois_N), perc_Nois_Sem_Rep = Total_Nois_Sem_Rep / Total_TotalErrorsNois_N, perc_Nois_Total_Rep = Total_Noise_ErrorsRepaired/Total_TotalErrorsNois_N) 
+Fig1_table 
+
+
   
 ```
 
