@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```{r}
 library(haven)
 library(dplyr)
+library(tidyr)
 ```
  
 
@@ -89,8 +90,23 @@ skimr::skim(Table3_AllDataPatient)
 ```
 
 
+```{r}
+#Table 9 using allDataPatientStudyDS
+Table9_AllDataPatient <- allDataPatientStudyDS %>%
+ group_by(Group)%>%
+mutate(total_Nrm_reformulation = sum(Nrm_Reformulation),total_Nrm_Filled_Pause = sum(Nrm_FilledPause),total_Nrm_Repetition = sum(Nrm_Repetition),total_Nois_reformulation = sum(Nois_Reformulation), total_Nois_FilledPause = sum(Nois_FilledPause), total_Nois_Repetition = sum(Nois_Repetition))%>%
+select("total_Nrm_reformulation","total_Nrm_Filled_Pause","total_Nrm_Repetition","total_Nois_reformulation","total_Nois_FilledPause","total_Nois_Repetition")
+Table9_AllDataPatient
+
+```
 
 
+```{r}
+Fig1_table <- allDataPatientStudyDS %>% 
+  group_by(Group)%>% 
+  select
+  
+```
 
 
 
