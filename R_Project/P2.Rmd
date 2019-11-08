@@ -96,5 +96,14 @@ TotalErrorsNormal_exDisf - total normal errors, excluding disfluencies
 Noise_ErrorsRepaired_ExDisf - repaired noise errors, excluding disfluencies
 TotalErrorsNoise_exDisf - total noise errors, excluding disfluencies
 
+```{r}
+allDataPDGroupsStudyDS %>%
+select("Age", "Medication", "Length_Parkinson","H_Y", "Sex", "Handedness", "MMSE", "RAVEN", "Phonologic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois")
+```
 
+
+
+```{r}
+codebook::compact_codebook(allDataPatientStudyDS)
+```
 
