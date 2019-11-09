@@ -93,27 +93,58 @@ skimr::skim(Table3_AllDataPatient)
 
 ```{r}
 #Table 9 using allDataPatientStudyDS
-Table9_AllDataPatient <- allDataPatientStudyDS %>%
- group_by(Group)%>%
-mutate(total_Nrm_reformulation = sum(Nrm_Reformulation),total_Nrm_Filled_Pause = sum(Nrm_FilledPause),total_Nrm_Repetition = sum(Nrm_Repetition),total_Nois_reformulation = sum(Nois_Reformulation), total_Nois_FilledPause = sum(Nois_FilledPause), total_Nois_Repetition = sum(Nois_Repetition))%>%
-select("total_Nrm_reformulation","total_Nrm_Filled_Pause","total_Nrm_Repetition","total_Nois_reformulation","total_Nois_FilledPause","total_Nois_Repetition")
+Table9_Raw_AllDataPatient <- allDataPatientStudyDS %>%
+  select("Group","Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
+
+Table9_AllDataPatient <- Table9_Raw_AllDataPatient %>%
+  gather (key = "Error_type", value = "Total_Number",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
 Table9_AllDataPatient
 
-```
+aggregate(Total_Number~Error_type+Group,Table9_AllDataPatient,sum)
+ 
 
+```
 
 ```{r}
-Fig1_table <- allDataPatientStudyDS %>% 
-  group_by(Group)%>% 
-  select("Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N") %>%
-  mutate(Total_Nrm_Sem_Rep=sum(Nrm_Sem_Rep), Total_Norm_ErrorsRepaired=sum(Norm_ErrorsRepaired), Total_TotalErrorsNorm_N = sum(TotalErrorsNorm_N), perc_Nrm_Sem_Rep = Total_Nrm_Sem_Rep / Total_TotalErrorsNorm_N, perc_Nrm_Total_Rep = Total_Norm_ErrorsRepaired/Total_TotalErrorsNorm_N,Total_Nois_Sem_Rep = sum(Nois_Sem_Rep),Total_Noise_ErrorsRepaired=sum(Noise_ErrorsRepaired),Total_TotalErrorsNois_N = sum(TotalErrorsNois_N), perc_Nois_Sem_Rep = Total_Nois_Sem_Rep / Total_TotalErrorsNois_N, perc_Nois_Total_Rep = Total_Noise_ErrorsRepaired/Total_TotalErrorsNois_N) 
-Fig1_table 
+Fig1_Raw_table <- allDataPatientStudyDS %>% 
+  select("Group","Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N") 
+
+Fig1_table <- Fig1_Raw_table %>%
+  gather (key = "Error_Repaired", value = "Total_Number",-Group,"Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N")
+Fig1_table
+
+Fig1 <- aggregate(Total_Number~Error_Repaired+Group,Fig1_table,sum)  
 
 
+
+#Fig1%>%
+#group_by(Group)%>%
+#filter(Error_Repaired == "Nrm_Sem_Rep",Error_Repaired == "TotalErrorsNorm_N") %>%
+#mutate(Perc_Sem_Error_Repaired = (Nrm_Sem_Rep / TotalErrorsNorm_N) * 100)
   
+  
+#  mutate(Total_Nrm_Sem_Rep=sum(Nrm_Sem_Rep), Total_Norm_ErrorsRepaired=sum(Norm_ErrorsRepaired), Total_TotalErrorsNorm_N = sum(TotalErrorsNorm_N), perc_Nrm_Sem_Rep = Total_Nrm_Sem_Rep / Total_TotalErrorsNorm_N, perc_Nrm_Total_Rep = Total_Norm_ErrorsRepaired/Total_TotalErrorsNorm_N,Total_Nois_Sem_Rep = sum(Nois_Sem_Rep),Total_Noise_ErrorsRepaired=sum(Noise_ErrorsRepaired),Total_TotalErrorsNois_N = sum(TotalErrorsNois_N), perc_Nois_Sem_Rep = Total_Nois_Sem_Rep / Total_TotalErrorsNois_N, perc_Nois_Total_Rep = Total_Noise_ErrorsRepaired/Total_TotalErrorsNois_N) 
+#Fig1_Raw_table 
+
 ```
 
+```{r}
+#Fig1_table<- Fig1_Raw_table %>%
+  #gather (key = "Error_Repaired", value = "Total_Number_Repaired",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
+#Table9_AllDataPatient
+```
 
+```{r}
+Fig2_Raw_table <- allDataPatientStudyDS %>% 
+  select("Group","DisfluenciesNorm", "DisfluenciesNoise", "SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N" ) 
+Fig2_table <- Fig2_Raw_table %>%
+  gather (key = "Error_Type", value = "Total_Number",-Group,"DisfluenciesNorm", "DisfluenciesNoise", "SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N")
+Fig2_table
+
+Fig2 <- aggregate(Total_Number~Error_Type+Group,Fig2_table,sum)  
+
+
+```
 
 
 
