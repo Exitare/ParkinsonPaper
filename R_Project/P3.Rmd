@@ -145,6 +145,29 @@ Fig2 <- aggregate(Total_Number~Error_Type+Group,Fig2_table,sum)
 
 
 ```
+```{r}
+Fig2_table_2 <- allDataPatientStudyDS %>%
+  group_by(Group)%>%
+  select("SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N" )%>%
+  mutate(Nrm_Perc_Sem_Error_Repaired = Nrm_Sem_Rep/SemErrors_Norm * 100, Nois_Per_Sem_Error_Repaired = Nois_Sem_Rep/SemErrors_Noise *100, Nrm_Perc_Total_Error_Rep = Norm_ErrorsRepaired/TotalErrorsNorm_N *100, Nois_Per_Total_Error_Rep = Noise_ErrorsRepaired/TotalErrorsNois_N *100)
+
+
+Fig2_table_2
+
+skimr::skim(Fig2_table_2)
+
+
+```
+```{r}
+Final_Fig2_table_2 <- Fig2_table_2 %>%
+  #filter_all(any_vars(!is.na(.))) %>%
+  replace(is.na(.), 0)%>%
+  group_by(Group) %>% 
+  summarize(Mean_Nrm_Perc_Sem_Error_Repaired = mean(Nrm_Perc_Sem_Error_Repaired),Mean_Nois_Per_Sem_Error_Repaired = mean(Nois_Per_Sem_Error_Repaired), Mean_Nrm_Perc_Total_Error_Repaired = mean(Nrm_Perc_Total_Error_Rep),Mean_Nois_Perc_Total_Error_Repaired = mean(Nois_Per_Total_Error_Rep))
+
+Final_Fig2_table_2   
+```
+
 
 
 
