@@ -28,7 +28,7 @@ allDataPDGroups = file.path("../", "All_Data_PD_GroupPatientstudy.sav")
 allDataPatientStudyDS = read_sav(allPatients)
 allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 
-new_p_s <- read.csv("/Users/bk/Desktop/Prksn_raw_codebook.csv")
+new_p_s <- read.csv(here::here("Prksn_codebook.csv"))
 
 ```
 
