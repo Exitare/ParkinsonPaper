@@ -131,8 +131,8 @@ descriptions$V2
 
 
 ```{r}
-codebook(patientStudy)
-codebook(groupStudy)
+#codebook(patientStudy)
+#codebook(groupStudy)
 ```
 
 ```{r}
