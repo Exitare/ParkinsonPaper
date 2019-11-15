@@ -27,8 +27,16 @@ The paper does comment that data that varied more than 2 SD from the mean for a 
 
 There is a potential geographic bias based on differences on the regional selection of the study and population within Belgium that is neither confirmed or denied. This is not resolvable, however this does not affect our ability to replicate the downstream analysis.
 
+# EDA 
 
-## Load data
+We folowed all the exploratory data methods to look at the variables of interest. 
+Looking at the raw values. ◦dplyr::glimpse()
+Computing summary statistics of the variables of interest. 
+Visualizing data
+
+##Looking at raw data
+
+### Load data
 ```{r}
 
 allPatients = file.path("../","All_Data_Patientstudy.sav")
@@ -40,7 +48,7 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 ```
 
 
-## First glimpse
+### First glimpse
 ```{r}
 glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
@@ -49,7 +57,7 @@ glimpse(allDataPDGroupsStudyDS)
 variable.names(allDataPatientStudyDS)
 ```
 
-```{r}
+```{r Selecting all important variables}
 
 patientStudy <- allDataPatientStudyDS %>%
   select("Subject", "Group", "Age", "Length_Parkinson", "Medication", "H_Y","Sex", "Handedness", "MMSE","RAVEN", "Phonologic_Fluency", "Semantic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
@@ -58,21 +66,34 @@ groupStudy <- allDataPDGroupsStudyDS %>%
 select("Age", "Medication", "Length_Parkinson","H_Y", "Sex", "Handedness", "MMSE", "RAVEN", "Phonologic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
 ```
 
+## Summary statistics
 ```{r}
 patientStudy %>%
   group_by(Sex) %>%
   skim()
 ```
 
-We have determined from this inspection that zero is male and one is female in the boolean binary.
+_We have determined from this inspection that zero is male and one is female in the boolean binary._
+
+## Visualization
+We created some graphs to study subject characteristics. We created boxplots for age, length of parkinson (year), medication calculated as Levodopa equivalent, Hoehn Yahr Scale. 
 
 Comparing MMSE, there are zero values missing for males and females, the mean is 27.04 for males and 27.89 for females. The standard deviation is 2.39 and 1.62. 
 Having a look at the age of the participants, the average for male participants were 64.8, whereas the average for female participants were 65.56.
 
 ```{r}
+
+```
+
+
+```{r}
 patientStudy %>%
   select(- "Sex", - "H_Y", - "Handedness") %>% 
   cor()
+```
+
+```{r}
+
 ```
 
 With increase in age, there is a corresponding of Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
@@ -133,5 +154,6 @@ ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
   facet_wrap(~ Group)
 ```
 
-Bullet 4 - Discussion of data that may the replication of paper figures (include missing data). The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. It is important to know in working with the data in general that 1 is for Parkinson's and 0 is for control. We want to change the Group data type to factor from double for the purpose of cleaner plots.
+# Thoughtful discription
+The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. We would like to point out that in this dataset 1 represents patients with Parkinson (Parkinson group) and 0 represents control. We want to change the "Group" data type to factor from double for the purpose of ease of future analysis and cleaner plots. We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, 
 
