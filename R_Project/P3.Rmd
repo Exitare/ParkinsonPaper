@@ -1,5 +1,6 @@
 ---
 title: "Markdown"
+author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
 output: html_document
 ---
 
@@ -13,13 +14,22 @@ library(haven)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(skimr)
 ```
  
+# Discussion of Issues
+
+The first issue we encountered was that the code for most of the variables were not familiar to us as we are not Parkinson's experts. The way we resolved this issue was by trial and error methods to determine what variables went into which tables.
+
+Another issue with the data is that sex is coded as either a one or zero (bolean value). We attempted to diagnose this by searching the paper for gender and sex however there was no immediate explanation. Next, we downloaded the supplementary files from the original version of the paper online. In the supplementary S1, gender appears to be coded as "m" or "v" which further complicates the issue of variable naming inconsistency. There may be a bias on gender because there more than triple males in the study group and more than double the number of males in the control. Also, the sample sizes are well under 30 thus are too small.
+
+The paper does comment that data that varied more than 2 SD from the mean for a particular condition being measured were removed from analysis. The percentatge of data loss has been reported for each condition being measured. However we are skeptical how that could change the overall analysis.
+
+There is a potential geographic bias based on differences on the regional selection of the study and population within Belgium that is neither confirmed or denied. This is not resolvable, however this does not affect our ability to replicate the downstream analysis.
 
 
 ## Load data
 ```{r}
-
 
 allPatients = file.path("../","All_Data_Patientstudy.sav")
 allDataPDGroups = file.path("../", "All_Data_PD_GroupPatientstudy.sav")
@@ -40,134 +50,88 @@ variable.names(allDataPatientStudyDS)
 ```
 
 ```{r}
-#Table 1 recreated using allDataPDGroupsStudyDS dataframe
-Table1_allDataPDGroups <- allDataPDGroupsStudyDS %>%
-select("Age", "Medication", "Length_Parkinson","H_Y")
 
-Table1_allDataPDGroups
-skimr::skim(Table1_allDataPDGroups)
-```
-```{r}
-#Table 1 recreated using allDataPatientStudyDS dataframe
-Table1_AllDataPatient <- allDataPatientStudyDS %>%
-  filter(Group == "1")%>%
-select("Group","Age", "Medication", "Length_Parkinson","H_Y")
+patientStudy <- allDataPatientStudyDS %>%
+  select("Subject", "Group", "Age", "Length_Parkinson", "Medication", "H_Y","Sex", "Handedness", "MMSE","RAVEN", "Phonologic_Fluency", "Semantic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
 
-
-Table1_AllDataPatient
-skimr::skim(Table1_AllDataPatient)
-```
-
-
-
-```{r}
-#Table 3 using allDataPatientStudyDS
-
-Table2_AllDataPatient <- allDataPatientStudyDS %>%
-  group_by(Group)%>%
-select("Age", "Sex", "Handedness","MMSE","RAVEN")
-
-Table2_AllDataPatient
-skimr::skim(Table2_AllDataPatient)
-
-Table2_AllDataPatient%>%
-  group_by(Group)%>%
-  count(Sex=="1")
-
-
-  
-
-
+groupStudy <- allDataPDGroupsStudyDS %>%
+select("Age", "Medication", "Length_Parkinson","H_Y", "Sex", "Handedness", "MMSE", "RAVEN", "Phonologic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
 ```
 
 ```{r}
-#Table 4 using allDataPatientStudyDS
-Table3_AllDataPatient <- allDataPatientStudyDS %>%
-  group_by(Group)%>%
-select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm","NPro_Dur_Ruis")
-Table3_AllDataPatient
-skimr::skim(Table3_AllDataPatient)
-
+patientStudy %>%
+  group_by(Sex) %>%
+  skim()
 ```
+
+We have determined from this inspection that zero is male and one is female in the boolean binary.
+
+Comparing MMSE, there are zero values missing for males and females, the mean is 27.04 for males and 27.89 for females. The standard deviation is 2.39 and 1.62. 
+Having a look at the age of the participants, the average for male participants were 64.8, whereas the average for female participants were 65.56.
+
+```{r}
+patientStudy %>%
+  select(- "Sex", - "H_Y", - "Handedness") %>% 
+  cor()
+```
+
+With increase in age, there is a corresponding of Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
+
+Additionally, we see that patieant with longer length of Parkison's receive a higher dose of medication. This  a strong correlation of .66.
+
+There is a negative correlation of -.33 of the mini mental metal state examination (MMSE) with each increase in unit of Parkinson's length.
+
 
 
 ```{r}
-#Table 9 using allDataPatientStudyDS
-Table9_Raw_AllDataPatient <- allDataPatientStudyDS %>%
-  select("Group","Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
+patientStudy %>%
+group_by("Subject")
+```
 
-Table9_AllDataPatient <- Table9_Raw_AllDataPatient %>%
-  gather (key = "Error_type", value = "Total_Number",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
-Table9_AllDataPatient
+In this grouping, the "Handedness" characteristic shows values that are not 100 which is not intuitve. Further, background research (Edinburogh Handedness Study, Wikipedia)
 
-aggregate(Total_Number~Error_type+Group,Table9_AllDataPatient,sum)
- 
 
+```{r}
+ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Age vs. Parkinson length") +
+  labs(x= "Age in years" , y="Length in years of Parkinsons")
 ```
 
 ```{r}
-Fig1_Raw_table <- allDataPatientStudyDS %>% 
-  select("Group","Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N") 
+ggplot(patientStudy, aes(x=Age)) +
+  geom_histogram() +
+  ggtitle("Age") +
+  labs(x= "Age in years") +
+  facet_wrap(~ Sex)
+```
+The above plot shows how many subjects for female and male have participanted in the study.
 
-Fig1_table <- Fig1_Raw_table %>%
-  gather (key = "Error_Repaired", value = "Total_Number",-Group,"Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N")
-Fig1_table
+```{r}
+ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
+  geom_point() +
+  ggtitle("Controls vs. Parkinsons") +
+  labs(x= "Age in years") +
+  facet_wrap(~ Group)
+```
 
-Fig1 <- aggregate(Total_Number~Error_Repaired+Group,Fig1_table,sum)  
+This clearly shows with this plot that the control is not affected by Parkinson's while the Parkinson's group has a wide variation of length of disease expression. It is interesting to see that there is at least one person under 50 but has had Parkinson's for 20 years.
 
-
-
-#Fig1%>%
-#group_by(Group)%>%
-#filter(Error_Repaired == "Nrm_Sem_Rep",Error_Repaired == "TotalErrorsNorm_N") %>%
-#mutate(Perc_Sem_Error_Repaired = (Nrm_Sem_Rep / TotalErrorsNorm_N) * 100)
-  
-  
-#  mutate(Total_Nrm_Sem_Rep=sum(Nrm_Sem_Rep), Total_Norm_ErrorsRepaired=sum(Norm_ErrorsRepaired), Total_TotalErrorsNorm_N = sum(TotalErrorsNorm_N), perc_Nrm_Sem_Rep = Total_Nrm_Sem_Rep / Total_TotalErrorsNorm_N, perc_Nrm_Total_Rep = Total_Norm_ErrorsRepaired/Total_TotalErrorsNorm_N,Total_Nois_Sem_Rep = sum(Nois_Sem_Rep),Total_Noise_ErrorsRepaired=sum(Noise_ErrorsRepaired),Total_TotalErrorsNois_N = sum(TotalErrorsNois_N), perc_Nois_Sem_Rep = Total_Nois_Sem_Rep / Total_TotalErrorsNois_N, perc_Nois_Total_Rep = Total_Noise_ErrorsRepaired/Total_TotalErrorsNois_N) 
-#Fig1_Raw_table 
-
+```{r}
+ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group") +
+  labs(x= "Group", y="Reformulate") +
+  facet_wrap(~ Group)
 ```
 
 ```{r}
-#Fig1_table<- Fig1_Raw_table %>%
-  #gather (key = "Error_Repaired", value = "Total_Number_Repaired",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
-#Table9_AllDataPatient
+ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
+  geom_boxplot() +
+  ggtitle("Filled Pause by Group") +
+  labs(x= "Group", y="Filled Pause") +
+  facet_wrap(~ Group)
 ```
 
-```{r}
-Fig2_Raw_table <- allDataPatientStudyDS %>% 
-  select("Group","DisfluenciesNorm", "DisfluenciesNoise", "SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N" ) 
-Fig2_table <- Fig2_Raw_table %>%
-  gather (key = "Error_Type", value = "Total_Number",-Group,"DisfluenciesNorm", "DisfluenciesNoise", "SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N")
-Fig2_table
-
-Fig2 <- aggregate(Total_Number~Error_Type+Group,Fig2_table,sum)  
-
-
-```
-```{r}
-Fig2_table_2 <- allDataPatientStudyDS %>%
-  group_by(Group)%>%
-  select("SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N" )%>%
-  mutate(Nrm_Perc_Sem_Error_Repaired = Nrm_Sem_Rep/SemErrors_Norm * 100, Nois_Per_Sem_Error_Repaired = Nois_Sem_Rep/SemErrors_Noise *100, Nrm_Perc_Total_Error_Rep = Norm_ErrorsRepaired/TotalErrorsNorm_N *100, Nois_Per_Total_Error_Rep = Noise_ErrorsRepaired/TotalErrorsNois_N *100)
-
-
-Fig2_table_2
-
-skimr::skim(Fig2_table_2)
-
-
-```
-```{r}
-Final_Fig2_table_2 <- Fig2_table_2 %>%
-  #filter_all(any_vars(!is.na(.))) %>%
-  replace(is.na(.), 0)%>%
-  group_by(Group) %>% 
-  summarize(Mean_Nrm_Perc_Sem_Error_Repaired = mean(Nrm_Perc_Sem_Error_Repaired),Mean_Nois_Per_Sem_Error_Repaired = mean(Nois_Per_Sem_Error_Repaired), Mean_Nrm_Perc_Total_Error_Repaired = mean(Nrm_Perc_Total_Error_Rep),Mean_Nois_Perc_Total_Error_Repaired = mean(Nois_Per_Total_Error_Rep))
-
-Final_Fig2_table_2   
-```
-
-
-
+Bullet 4 - Discussion of data that may the replication of paper figures (include missing data). The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. It is important to know in working with the data in general that 1 is for Parkinson's and 0 is for control. We want to change the Group data type to factor from double for the purpose of cleaner plots.
 
