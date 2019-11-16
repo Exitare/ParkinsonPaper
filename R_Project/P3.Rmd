@@ -69,36 +69,79 @@ select("Age", "Medication", "Length_Parkinson","H_Y", "Sex", "Handedness", "MMSE
 ## Summary statistics
 ```{r}
 patientStudy %>%
-  group_by(Sex) %>%
+  group_by(Group) %>%
   skim()
 ```
 
 _We have determined from this inspection that zero is male and one is female in the boolean binary._
 
 ## Visualization
-We created some graphs to study subject characteristics. We created boxplots for age, length of parkinson (year), medication calculated as Levodopa equivalent, Hoehn Yahr Scale. 
+Overall small sample size results in the values of most variables being highly skewed, as is seen from skimming the data and creating addition histograms and boxplots.For highly skewed data it is worth looking at the median values of the variables as opposed to the mean. 
+
+We created some graphs to study "Group" (Control vs Parkinson) characteristics. We created boxplots for age, length of parkinson (year), medication calculated as Levodopa equivalent and Hoehn Yahr Scale. 
+
+Age:
+The median age of males is slightly higher than females in the control group than in disease group. There are some outliers in the males in both control and disease groups.
+
+Length of Parkinson:
+The median length of Parkinson in females is lower than that in males, with both groups showing a wide variation in this variable.
+
+H_Y:
+Hoehn and Yahr scale is used to describe the symptom progression of Parkinson disease. Males in this study population have higher values for the Hoehn and Yahr scale than females. The 75th percentile H_Y score for Males is 3 as opposed to 2.5 for females. However the median H_Y scores for both males and females are the aproxomately equal (2). 
+
+Medication:
+The median Levodopa equivalent dose for males is much higher than that for females. Males also have greater variation in the medication dose than females, but this can also be due to the fact that total number of females in the study is far less than males (5 females and 11 males),
 
 Comparing MMSE, there are zero values missing for males and females, the mean is 27.04 for males and 27.89 for females. The standard deviation is 2.39 and 1.62. 
 Having a look at the age of the participants, the average for male participants were 64.8, whereas the average for female participants were 65.56.
 
 ```{r}
-
+patientStudy$Group <- as.factor( patientStudy$Group )
+patientStudy$Sex <- as.factor( patientStudy$Sex )
 ```
 
 
 ```{r}
-patientStudy %>%
-  select(- "Sex", - "H_Y", - "Handedness") %>% 
-  cor()
-```
+Group_characteristics <- patientStudy %>%
+  select("Group","Age","Length_Parkinson","H_Y","Medication","Sex") 
 
+ggplot(Group_characteristics,aes(x = Age,fill = Sex))+
+  geom_histogram(binwidth = 5,position = "dodge")+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = Sex,y = Age))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = Sex,y = Length_Parkinson))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = H_Y,fill = Sex))+
+  geom_histogram(binwidth = 0.5)+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = Sex,y = H_Y))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+
+ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+
+
+```
 ```{r}
-
+patientStudy%>%
+  select(-"Sex",-"H_Y",-"RAVEN",-"Group",-"Subject")%>%
+cor()
 ```
 
-With increase in age, there is a corresponding of Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
+With increase in age, there is a corresponding increase in Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
 
-Additionally, we see that patieant with longer length of Parkison's receive a higher dose of medication. This  a strong correlation of .66.
+Additionally, we see that patieant with longer length of Parkison's receive a higher dose of medication. There is a strong correlation of .66.
 
 There is a negative correlation of -.33 of the mini mental metal state examination (MMSE) with each increase in unit of Parkinson's length.
 
@@ -122,10 +165,12 @@ ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
 ```{r}
 ggplot(patientStudy, aes(x=Age)) +
   geom_histogram() +
-  ggtitle("Age") +
+   ggtitle("Age") +
   labs(x= "Age in years") +
   facet_wrap(~ Sex)
 ```
+
+
 The above plot shows how many subjects for female and male have participanted in the study.
 
 ```{r}
@@ -136,7 +181,7 @@ ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
   facet_wrap(~ Group)
 ```
 
-This clearly shows with this plot that the control is not affected by Parkinson's while the Parkinson's group has a wide variation of length of disease expression. It is interesting to see that there is at least one person under 50 but has had Parkinson's for 20 years.
+This plot clearly shows that while the control is not affected by Parkinson, there is wide variability in the length of Parkinson disease in the Parkinson group. Subjects with Parkinson have a wide variation in the length of disease expression. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of remarkable, from 5 to almost 25 years. 
 
 ```{r}
 ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
@@ -154,6 +199,6 @@ ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
   facet_wrap(~ Group)
 ```
 
-# Thoughtful discription
-The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. We would like to point out that in this dataset 1 represents patients with Parkinson (Parkinson group) and 0 represents control. We want to change the "Group" data type to factor from double for the purpose of ease of future analysis and cleaner plots. We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, 
+# Thoughtful Discussion
+The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. We would like to point out that in this dataset 1 represents patients with Parkinson (Parkinson group) and 0 represents control. We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed variable distribution makes us wonder if we can draw any meanigful inference from over all analysis.
 
