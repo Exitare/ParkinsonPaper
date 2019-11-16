@@ -1,0 +1,85 @@
+---
+title: "P2-Addition"
+author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+---
+title: "Markdown"
+author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
+output: html_document
+---
+
+The xplicit and exact recipe to go from raw data to codebook that we used is as follows. First, we created a markdown file and pushed it to a GitHub repository so that we could work remotely as a team. Next, we evaluated tables 1 through 9 in the paper and determined the variables needed to recreat each table. After that, we loaded the raw data into the markdown file and selected every variable needed. Finally, we wrote a description of each variable in word, copied it to Excel, auto-split out just the description, read the file into R and then use mutate to added a variable description.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Load Libraries
+```{r}
+library(haven)
+library(dplyr)
+```
+ 
+
+
+## Load data
+```{r}
+
+allPatients = file.path("All_Data_Patientstudy.sav")
+allDataPDGroups = file.path("All_Data_PD_GroupPatientstudy.sav")
+
+allDataPatientStudyDS = read_sav(allPatients)
+allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
+
+```
+
+
+## First glimpse
+```{r}
+glimpse(allDataPatientStudyDS)
+glimpse(allDataPDGroupsStudyDS)
+```
+```{r}
+variable.names(allDataPatientStudyDS)
+```
+
+## Tidying Dataset
+
+We evaluted that we only need one file to recreate important tables and figures. That is the file "All_Data_Patientstudy.sav". 
+To generate a new dataset, we selected all importants columns from the existing dataset and had a second glimpse.
+
+```{r}
+
+patientStudy <- allDataPatientStudyDS %>%
+  select("Subject","Age", "Length_Parkinson", "Medication", "H_Y","Sex", "Group", "Handedness", "MMSE","RAVEN", "Phonologic_Fluency", "Semantic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
+
+glimpse(patientStudy)
+```
+
+### Converting variables
+
+In order to follow best practices dataset tidying, some columns should be converted from numeric to factor.
+In our case this should be done for the columns Sex and Group.
+
+```{r Converting}
+patientStudy$Sex <- factor(patientStudy$Sex)
+patientStudy$Group <- factor(patientStudy$Group) 
+```
+
+
+### Write CSV
+
+The tidyed dataset will be created in the same folder.
+
+```{r Write csv}
+write.csv(patientStudy, "tidied-dataset.csv")
+```
+
+
+
