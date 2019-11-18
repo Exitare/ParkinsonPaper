@@ -7,7 +7,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
-## 1. Following best practice for collaboration and teanwork
+## 1. Following best practice for collaboration and teamwork
 
 We wanted to keep track of changes we make to the documents for our project. Our team decided to use Github to enable collaboration and best practices for data and project sharing. We looked at the data sets available to us for our project at https://osf.io/37u7u/. We followed the guidelines suggested by Ellis & Leek paper.
 
@@ -35,18 +35,19 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 # 5. First glimpse 
 Next we glimpsed at our datasets. There were 34 observations and 90 variables in "allDataPatientStudyDS" where as the file titled "allDataPDGroupsStudyDS" had 18 observations and 92 variables. We dug in deeper as to the kinds of variables available in both datasets. Closer examinations revealed that the file titled "allDataPatientStudyDS" included data on all 34 subjects in the study and would be sufficient for the purpose of our project. 
 
-```{r ECHO=FALSE}
-glimpse(allDataPatientStudyDS)
-glimpse(allDataPDGroupsStudyDS)
+```{r}
+#glimpse(allDataPatientStudyDS)
+#glimpse(allDataPDGroupsStudyDS)
 ```
-## 6. Looking at all variable names in "allDataPatientStudyDS"
+## 6. Looking at variable names
+Since we had no codebook to describe each variable in the dataset, and the entire set of data came in one big table, we started out by looking at all the variable names in the data table. We matched these variables to the Parkinson tests described in the paper. It was a laborious process which included making some intelligent guesses to assign variables to appropriate Parkinson test results.
 
 ```{r}
-variable.names(allDataPatientStudyDS)
+#variable.names(allDataPatientStudyDS)
 
 ```
 
-## 7. Tidying Dataset
+## 7. Tidying dataset
 
 Per Tidy guidelines (Ellis & Leek paper):
 1. Each variable in our data table is in a seperate column.
@@ -61,25 +62,48 @@ patientStudy <- allDataPatientStudyDS %>%
   select("Subject","Age", "Length_Parkinson", "Medication", "H_Y","Sex", "Group", "Handedness", "MMSE","RAVEN", "Phonologic_Fluency", "Semantic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
 
 ```
-```{r ECHO=FALSE}
 
-glimpse(patientStudy)
+```{r}
+
+#glimpse(patientStudy)
 ```
 
-## 8. Converting data types for variables 
- We looked at the data type and structure for all the varables in out final table. We discovered that the variable "Group" was stored as type "double" in the patientStudy table. In order to regenerate the graphs and tables by "Group" (control and Parkinson), we decided to convert the variable "Group" from double to a factor. We were curious about the differences in the test results between control and Parkinson group, with respect to gender, therefore we converted the variable "Sex" from "character to factor as well. 
+## 8. Converting data types 
+ We looked at the data types and structures for all the varables in out final table. We discovered that the variable "Group" was stored as type "double" in the patientStudy table. In order to regenerate the graphs and tables by "Group" (control and Parkinson), we decided to convert the variable "Group" from double to a factor. We were curious about the differences in the test results between control and Parkinson groups, with respect to gender, therefore we converted the variable "Sex" from "character to factor as well. 
  
-```{r Converting}
+```{r Converting data types}
 patientStudy$Sex <- factor(patientStudy$Sex)
 patientStudy$Group <- factor(patientStudy$Group) 
 ```
 
-## 9. Saving the final dataset for our project as tidied dataset - tidied-dataset
+## 9. Saving the final tidied dataset 
 Finally we converted the final dataset for our project as a .csv file. 
 
 ```{r Write csv}
 write.csv(patientStudy, "tidied-dataset.csv")
 ```
 
+## 10 Generating Codebook 
 
+We used the codebook and igraph libraries to generate a very descriptive codebook. The codebook.rmd was submitted earlier and includes all codes to generate the code book. These are the steps we took to make the codebook and igraph libraries to work for us.
+
+1. we wrote the description of each variable in word
+2. Copied the descriptions to Excel 
+3. Auto-split out just the description 
+4. Read the file into R  
+5. Used the mutate function to add description to each variable and saved the file as new_p_s to generate the codebook
+
+```{r - Loading libraries for codebook}
+library(codebook)
+library(igraph)
+```
+
+```{r}
+descriptions <- read.csv("../parkinson_ group_patient_codebook.csv", header = FALSE)
+descriptions
+```
+
+```{r}
+#codebook(new_p_s)
+```
 

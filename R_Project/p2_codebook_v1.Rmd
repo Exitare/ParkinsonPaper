@@ -1,10 +1,10 @@
 ---
-title: "Markdown"
+title: " Codebook Markdown"
 author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
 output: html_document
 ---
 
-The xplicit and exact recipe to go from raw data to codebook that we used is as follows. First, we created a markdown file and pushed it to a GitHub repository so that we could work remotely as a team. Next, we evaluated tables 1 through 9 in the paper and determined the variables needed to recreat each table. After that, we loaded the raw data into the markdown file and selected every variable needed. Finally, we wrote a description of each variable in word, copied it to Excel, auto-split out just the description, read the file into R and then use mutate to added a variable description.
+The xplicit and exact recipe to go from raw data to codebook that we used is as follows. First, we created a markdown file and pushed it to a GitHub repository so that we could work remotely as a team. Next, we evaluated tables 1 through 9 in the paper and determined the variables needed to recreat each table. After that, we loaded the raw data into the markdown file and selected every variable needed. Finally, we wrote a description of each variable in word, copied it to Excel, auto-split out just the description, read the file into R and then use mutate to add a variable description.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
