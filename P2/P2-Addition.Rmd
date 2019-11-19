@@ -39,12 +39,14 @@ Next we glimpsed at our datasets. There were 34 observations and 90 variables in
 #glimpse(allDataPatientStudyDS)
 #glimpse(allDataPDGroupsStudyDS)
 ```
-## 6. Looking at variable names
-Since we had no codebook to describe each variable in the dataset, and the entire set of data came in one big table, we started out by looking at all the variable names in the data table. We matched these variables to the Parkinson tests described in the paper. It was a laborious process which included making some intelligent guesses to assign variables to appropriate Parkinson test results.
+## 6. Looking at variable names, their distribution and summary statistics
+Since we had no codebook to describe each variable in the dataset, and the entire set of data came in one big table, we started out by looking at all the variable names in the data table. We matched these variables to the Parkinson tests described in the paper. It was a laborious process which included making some intelligent guesses to assign variables to appropriate Parkinson test results. We also looked at the distribution and summary statistics of variables to match with what the paper reported.  
 
 ```{r}
 #variable.names(allDataPatientStudyDS)
-
+#allDataPatientStudyDS %>%
+  #group_by(Group) %>%
+  #skimr::skim()
 ```
 
 ## 7. Tidying dataset
