@@ -36,17 +36,17 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 Next we glimpsed at our datasets. There were 34 observations and 90 variables in "allDataPatientStudyDS" where as the file titled "allDataPDGroupsStudyDS" had 18 observations and 92 variables. We dug in deeper as to the kinds of variables available in both datasets. Closer examinations revealed that the file titled "allDataPatientStudyDS" included data on all 34 subjects in the study and would be sufficient for the purpose of our project. 
 
 ```{r}
-#glimpse(allDataPatientStudyDS)
-#glimpse(allDataPDGroupsStudyDS)
+glimpse(allDataPatientStudyDS)
+glimpse(allDataPDGroupsStudyDS)
 ```
 ## 6. Looking at variable names, their distribution and summary statistics
-Since we had no codebook to describe each variable in the dataset, and the entire set of data came in one big table, we started out by looking at all the variable names in the data table. We matched these variables to the Parkinson tests described in the paper. It was a laborious process which included making some intelligent guesses to assign variables to appropriate Parkinson test results. We also looked at the distribution and summary statistics of variables to match with what the paper reported.  
+Since we had no codebook to describe each variable in the dataset, and the entire set of data came in one big table, we started out by looking at all the variable names in the available data table. We matched these variables to the Parkinson tests described in the paper. It was a laborious process which included making a word document of tables and figures we needed to recreate for our project and identifying variables from the data set that were used to create these objects. We also looked at the distribution and summary statistics of the variables to match with what the paper reported.  
 
 ```{r}
-#variable.names(allDataPatientStudyDS)
-#allDataPatientStudyDS %>%
-  #group_by(Group) %>%
-  #skimr::skim()
+variable.names(allDataPatientStudyDS)
+allDataPatientStudyDS %>%
+  group_by(Group) %>%
+  skimr::skim()
 ```
 
 ## 7. Tidying dataset
@@ -67,7 +67,7 @@ patientStudy <- allDataPatientStudyDS %>%
 
 ```{r}
 
-#glimpse(patientStudy)
+glimpse(patientStudy)
 ```
 
 ## 8. Converting data types 
@@ -106,6 +106,6 @@ descriptions
 ```
 
 ```{r}
-#codebook(new_p_s)
+codebook(new_p_s)
 ```
 
