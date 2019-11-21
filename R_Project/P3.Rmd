@@ -136,6 +136,8 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 
 ```
 ```{r}
+# TODO we should just select the columns we want to calculate the correlation.
+
 patientStudy%>%
   select(-"Sex",-"H_Y",-"RAVEN",-"Group",-"Subject")%>%
 cor()
