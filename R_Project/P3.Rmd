@@ -53,7 +53,9 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
 ```
-```{r}
+
+
+```{r include=FALSE}
 variable.names(allDataPatientStudyDS)
 ```
 
@@ -153,6 +155,7 @@ group_by("Subject")
 ```
 
 In this grouping, the "Handedness" characteristic shows values that are not 100 which is not intuitve. Further, background research (Edinburogh Handedness Study, Wikipedia)
+TODO
 
 
 ```{r}
@@ -201,4 +204,4 @@ ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
 
 # Thoughtful Discussion
 The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. We would like to point out that in this dataset 1 represents patients with Parkinson (Parkinson group) and 0 represents control. We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed variable distribution makes us wonder if we can draw any meanigful inference from over all analysis.
-
+TODO: Additions
