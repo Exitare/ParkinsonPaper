@@ -138,10 +138,9 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 ```
 # Looking at how the control variables correlate with each other
 ```{r}
-# TODO we should just select the columns we want to calculate the correlation.
 
-patientStudy %>%
-  select("Age","Length_Parkinson","Medication","MMSE") %>%
+patientStudy%>%
+  select("Age","Medication","Length_Parkinson","MMSE", "Nrm_FilledPause")%>%
 cor()
 ```
 
@@ -151,6 +150,7 @@ Additionally, we see that patieant with longer length of Parkison's receive a hi
 
 There is a negative correlation of -.33 of the mini mental metal state examination (MMSE) with each increase in unit of Parkinson's length.
 
+We thought it might a good idea to check that if a patient with Parkinson's has a correlation with the speech variable of length of pause. Interestingly, it is slightly negatively correlated with a value of -.2. But it is positively correlated with age. However, this might not represent the most meaningful metric because the response could be multivariate with multiple correlations.
 
 
 ```{r}
@@ -271,6 +271,6 @@ ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
   
 ```
 
-# Thoughtful Discussion
-There are some N/As but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the over all analysis.
+# Overall Impression 
+There are some N/As but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the over all analysis. Also, we are fear that any meanigful differences between genders may not emerge due to the small sample size of females in this study. 
 TODO: Additions
