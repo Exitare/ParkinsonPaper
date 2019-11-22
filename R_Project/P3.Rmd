@@ -78,6 +78,27 @@ patientStudy %>%
 
 _We have determined from this inspection that zero is male and one is female in the boolean binary._
 
+## Overall Summary statistics
+The data table for the study has 34 observations for 53 variables. There are 16 controls and 18 Parkinson patients in this study. Variables "Sex" and "Group" are factor variables. There are 11 males and 5 females in the control group and 14 males and 4 females in the Parkinson group. The distribution of most variables is highly skewed. 
+
+## Summary statistic for control variables
+For the purpose of this study the authors considered age, gender, handedness, Mini Mental State Examination (MMSE) and Raven's progressive matrices (RAVEN) as control variabes and tried to minimize their variability between the two groups. We looked at the mean and standard deviations of these variables. Our results matched with what the authors report in the paper (Table 3, page 9/28). 
+
+```{r}
+Table3_AllDataPatient <- patientStudy %>%
+  group_by(Group)%>%
+select("Age", "Sex", "Handedness","MMSE","RAVEN")
+
+skimr::skim(Table3_AllDataPatient)
+
+Table3_AllDataPatient%>%
+  group_by(Group)%>%
+  count(Sex=="1")
+
+
+```
+
+
 ## Visualization
 Overall small sample size results in the values of most variables being highly skewed, as is seen from skimming the data and creating additional histograms and boxplots.For highly skewed data it is worth looking at the median values of the variables as opposed to the mean. 
 
@@ -136,7 +157,7 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 
 
 ```
-# Looking at how the control variables correlate with each other
+# Looking at how variables correlate with each other
 ```{r}
 
 patientStudy%>%
@@ -150,7 +171,7 @@ Additionally, we see that patieant with longer length of Parkison's receive a hi
 
 There is a negative correlation of -.33 of the mini mental metal state examination (MMSE) with each increase in unit of Parkinson's length.
 
-We thought it might a good idea to check that if a patient with Parkinson's has a correlation with the speech variable of length of pause. Interestingly, it is slightly negatively correlated with a value of -.2. But it is positively correlated with age. However, this might not represent the most meaningful metric because the response could be multivariate with multiple correlations.
+We thought it might be a good idea to check if a patient with Parkinson's has a correlation with the speech variable of length of pause. Interestingly, it is slightly negatively correlated with a value of -.2. But it is positively correlated with age. However, this might not represent the most meaningful metric because the response could be multivariate with multiple correlations.
 
 
 ```{r}
@@ -205,7 +226,7 @@ ggplot(aes(x = Age, y = Length_Parkinson)) +
 
 # Looking at Disfluencies between diseased and control group and exploring differences in disfluencies by sex
 
-We explored the distribution and variation of two types of disfluencies, reformulation and filled pauses, between the disease and control group.We were curious if the differences are similar in both sexes. We would like to point out though that the numbers of females in the 2 groups, diseased and control, are dispropotionately low. We would like to point out that in this dataset:
+We explored the distribution and variation of two types of disfluencies, reformulation and filled pauses, between the disease and control group.We were curious if the differences are similar in both sexes. We would like to point out though that the number of females in the 2 groups, diseased and control, is dispropotionately low. We would like to point out that in this dataset:
 
 Group is a factor variable
  1 = patients with Parkinson (Parkinson group) 
@@ -272,4 +293,4 @@ ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
 ```
 
 # Overall Impression 
-From the intial EDA we discovered that the distributions of most variables are highly skewed. This could be due to the small sample size. There are several N/As for some of the variables but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. Small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the overall analysis. Also, we fear that any meanigful differences between genders may not emerge due to the small sample size of females in this study. 
+From the intial EDA we discovered that the distributions of most variables are highly skewed. This could be due to the small sample size. There are several N/As for some of the variables but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. Sumnmary statistics of all control variables matched with what the authors have reported. Small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the overall analysis. Also, we fear that any meanigful differences between genders may not emerge due to the small sample size of females in this study. 
