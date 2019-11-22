@@ -49,6 +49,7 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 
 
 ### First glimpse
+A good EDA starts with a glimpse at the data or a raw view of the data. 
 ```{r}
 glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
@@ -78,7 +79,7 @@ patientStudy %>%
 _We have determined from this inspection that zero is male and one is female in the boolean binary._
 
 ## Visualization
-Overall small sample size results in the values of most variables being highly skewed, as is seen from skimming the data and creating addition histograms and boxplots.For highly skewed data it is worth looking at the median values of the variables as opposed to the mean. 
+Overall small sample size results in the values of most variables being highly skewed, as is seen from skimming the data and creating additional histograms and boxplots.For highly skewed data it is worth looking at the median values of the variables as opposed to the mean. 
 
 We created some graphs to study "Group" (Control vs Parkinson) characteristics. We created boxplots for age, length of parkinson (year), medication calculated as Levodopa equivalent and Hoehn Yahr Scale. 
 
@@ -135,11 +136,12 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 
 
 ```
+# Looking at how the control variables correlate with each other
 ```{r}
 # TODO we should just select the columns we want to calculate the correlation.
 
-patientStudy%>%
-  select(-"Sex",-"H_Y",-"RAVEN",-"Group",-"Subject")%>%
+patientStudy %>%
+  select("Age","Length_Parkinson","Medication","MMSE") %>%
 cor()
 ```
 
@@ -156,8 +158,9 @@ patientStudy %>%
 group_by("Subject")
 ```
 
-In this grouping, the "Handedness" characteristic shows values that are not 100 which is not intuitve. Further, background research (Edinburogh Handedness Study, Wikipedia)
-TODO
+
+# Regarding the variable Handedness:
+Based on background research on the handedness variable, analysis can be done that either treats this variable as continuous as it is recorded in the raw data, or it can be converted to a discrete variable depending on the interpretation that we desire.
 
 
 ```{r}
@@ -178,6 +181,10 @@ ggplot(patientStudy, aes(x=Age)) +
 
 The above plot shows how many subjects for female and male have participanted in the study.
 
+# Looking at length of Parkinson by Age
+
+We generated scatter and boxplots to look at the variability in the length of Parkinson in the diseased group. Subjects with Parkinson have a wide variation in the length of disease. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of disease is remarkable, from 5 to almost 25 years. 
+
 ```{r}
 ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
   geom_point() +
@@ -185,25 +192,85 @@ ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
   labs(x= "Age in years") +
   facet_wrap(~ Group)
 ```
+```{r}
+library(ggbeeswarm)
+patientStudy %>%
+  filter(Group==1) %>%
+ggplot(aes(x = Age, y = Length_Parkinson)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_quasirandom(fill = "lightseagreen", 
+               colour = "lightseagreen") 
 
-This plot clearly shows that while the control is not affected by Parkinson, there is wide variability in the length of Parkinson disease in the Parkinson group. Subjects with Parkinson have a wide variation in the length of disease expression. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of remarkable, from 5 to almost 25 years. 
+```
+
+# Looking at Disfluencies between diseased and control group and exploring differences in disfluencies by sex
+
+We explored the distribution and variation of two types of disfluencies, reformulation and filled pauses, between the disease and control group.We were curious if the differences are similar in both sexes. We would like to point out though that the numbers of females in the 2 groups, diseased and control, are dispropotionately low. We would like to point out that in this dataset:
+
+Group is a factor variable
+ 1 = patients with Parkinson (Parkinson group) 
+ 0 = control
+
+Sex is a factor variable 
+0 = Male
+1= Female
+
+We see that under normal condition and under noise masking, the median value of reformulation disfluency is higher and the median value of the filled pause is lower in the diseased group when compared to the control. 
+However, when we further group by sex, we see differences between the genders regarding these 2 disfluencies, reformulation and filled pause, under the two different conditions, normal and noise masking. WE see that while the males follow the overall trend seen at "Group" (disease vs control) level, female diseased subjects under noise masking show differing trend. Female diseased subjects have lower median value of reformulation and higher median value of filled pauses than the control. This is an interesting trend which warrants further exploration. The differences in disfluencies between the genders may not emerge as a significant finding due to the small sample size of females in this study.  
+
+
 
 ```{r}
 ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
   geom_boxplot() +
-  ggtitle("Reformulation by Group") +
+  ggtitle("Reformulation by Group under Normal Condition") +
+  labs(x= "Group", y="Reformulate") 
+ 
+
+ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group and Sex under Normal Condition") +
   labs(x= "Group", y="Reformulate") +
-  facet_wrap(~ Group)
+  facet_wrap(~ Sex)
+
+ggplot(patientStudy, aes(x=Group, y=Nois_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group under Noise Masking") +
+  labs(x= "Group", y="Reformulate") 
+
+ggplot(patientStudy, aes(x=Group, y=Nois_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group and Sex under Noise Masking") +
+  labs(x= "Group", y="Reformulate") +
+  facet_wrap(~ Sex)
 ```
+
 
 ```{r}
 ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
-  geom_boxplot() +
-  ggtitle("Filled Pause by Group") +
-  labs(x= "Group", y="Filled Pause") +
-  facet_wrap(~ Group)
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group under Normal Condition") +
+  labs(x= "Group", y="Filled Pause")
+
+ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group and Sex under Normal Condition ") +
+  labs(x= "Group", y="Filled Pause")+
+  facet_wrap(~ Sex)
+
+ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group under Noise Masking") +
+  labs(x= "Group", y="Filled Pause")
+
+ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group and Sex under Noise Masking") +
+  labs(x= "Group", y="Filled Pause")+
+  facet_wrap(~ Sex)
+  
 ```
 
 # Thoughtful Discussion
-The above two box plots show representative distribution and variation of differing language response variables based on disease status of the two groups. There are some N/As but these can be identified and removed if needed. We would like to point out that in this dataset 1 represents patients with Parkinson (Parkinson group) and 0 represents control. We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed variable distribution makes us wonder if we can draw any meanigful inference from over all analysis.
+There are some N/As but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the over all analysis.
 TODO: Additions
