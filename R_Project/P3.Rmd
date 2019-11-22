@@ -139,7 +139,7 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 # TODO we should just select the columns we want to calculate the correlation.
 
 patientStudy%>%
-  select(-"Sex",-"H_Y",-"RAVEN",-"Group",-"Subject")%>%
+  select("Age","Medication","Length_Parkinson","MMSE", "Nrm_FilledPause")%>%
 cor()
 ```
 
@@ -149,6 +149,7 @@ Additionally, we see that patieant with longer length of Parkison's receive a hi
 
 There is a negative correlation of -.33 of the mini mental metal state examination (MMSE) with each increase in unit of Parkinson's length.
 
+We thought it might a good idea to check that if a patient with Parkinson's has a correlation with the speech variable of length of pause. Interestingly, it is slightly negatively correlated with a value of -.2. But it is positively correlated with age. However, this might not represent the most meaningful metric because the response could be multivariate with multiple correlations.
 
 
 ```{r}
