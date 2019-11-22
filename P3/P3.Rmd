@@ -1,0 +1,276 @@
+---
+title: "Markdown"
+author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Load Libraries
+```{r}
+library(haven)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(skimr)
+```
+ 
+# Discussion of Issues
+
+The first issue we encountered was that the code for most of the variables were not familiar to us as we are not Parkinson's experts. The way we resolved this issue was by trial and error methods to determine what variables went into which tables.
+
+Another issue with the data is that sex is coded as either a one or zero (bolean value). We attempted to diagnose this by searching the paper for gender and sex however there was no immediate explanation. Next, we downloaded the supplementary files from the original version of the paper online. In the supplementary S1, gender appears to be coded as "m" or "v" which further complicates the issue of variable naming inconsistency. There may be a bias on gender because there more than triple males in the study group and more than double the number of males in the control. Also, the sample sizes are well under 30 thus are too small.
+
+The paper does comment that data that varied more than 2 SD from the mean for a particular condition being measured were removed from analysis. The percentatge of data loss has been reported for each condition being measured. However we are skeptical how that could change the overall analysis.
+
+There is a potential geographic bias based on differences on the regional selection of the study and population within Belgium that is neither confirmed or denied. This is not resolvable, however this does not affect our ability to replicate the downstream analysis.
+
+# EDA 
+
+We folowed all the exploratory data methods to look at the variables of interest. 
+Looking at the raw values. ◦dplyr::glimpse()
+Computing summary statistics of the variables of interest. 
+Visualizing data
+
+##Looking at raw data
+
+### Load data
+```{r}
+
+allPatients = file.path("../","All_Data_Patientstudy.sav")
+allDataPDGroups = file.path("../", "All_Data_PD_GroupPatientstudy.sav")
+
+allDataPatientStudyDS = read_sav(allPatients)
+allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
+
+```
+
+
+### First glimpse
+A good EDA starts with a glimpse at the data or a raw view of the data. 
+```{r}
+glimpse(allDataPatientStudyDS)
+glimpse(allDataPDGroupsStudyDS)
+```
+
+
+```{r include=FALSE}
+variable.names(allDataPatientStudyDS)
+```
+
+```{r Selecting all important variables}
+
+patientStudy <- allDataPatientStudyDS %>%
+  select("Subject", "Group", "Age", "Length_Parkinson", "Medication", "H_Y","Sex", "Handedness", "MMSE","RAVEN", "Phonologic_Fluency", "Semantic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
+
+groupStudy <- allDataPDGroupsStudyDS %>%
+select("Age", "Medication", "Length_Parkinson","H_Y", "Sex", "Handedness", "MMSE", "RAVEN", "Phonologic_Fluency", "BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm", "NPro_Dur_Ruis", "Nrm_Reformulation", "Nrm_FilledPause", "Nrm_Repetition", "DisfluenciesNorm", "Nois_Reformulation", "Nois_FilledPause", "Nois_Repetition", "DisfluenciesNoise", "Nrm_Sem_Unrep", "Nrm_Sem_Rep", "SemErrors_Norm", "Nrm_Phon_Unrep", "Nrm_Phon_Rep", "PhonErrors_Norm", "Nrm_Gram_Unrep", "Nrm_Gram_Rep", "GramErrors_Norm", "Norm_ErrorsUnrepaired", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Unrep", "Nois_Sem_Rep", "SemErrors_Noise", "Nois_Phon_Unrep", "Nois_Phon_Rep", "PhonErrors_Nois", "Nois_Gram_Unrep", "Nois_Gram_Rep", "GramErrors_Nois", "Noise_ErrorsUnrepaired", "Noise_ErrorsRepaired", "TotalErrorsNois_N", "Norm_ErrorsRepaired_ExDisf", "TotalErrorsNormal_exDisf", "Noise_ErrorsRepaired_ExDisf", "TotalErrorsNoise_exDisf")
+```
+
+## Summary statistics
+```{r}
+patientStudy %>%
+  group_by(Group) %>%
+  skim()
+```
+
+_We have determined from this inspection that zero is male and one is female in the boolean binary._
+
+## Visualization
+Overall small sample size results in the values of most variables being highly skewed, as is seen from skimming the data and creating additional histograms and boxplots.For highly skewed data it is worth looking at the median values of the variables as opposed to the mean. 
+
+We created some graphs to study "Group" (Control vs Parkinson) characteristics. We created boxplots for age, length of parkinson (year), medication calculated as Levodopa equivalent and Hoehn Yahr Scale. 
+
+Age:
+The median age of males is slightly higher than females in the control group than in disease group. There are some outliers in the males in both control and disease groups.
+
+Length of Parkinson:
+The median length of Parkinson in females is lower than that in males, with both groups showing a wide variation in this variable.
+
+H_Y:
+Hoehn and Yahr scale is used to describe the symptom progression of Parkinson disease. Males in this study population have higher values for the Hoehn and Yahr scale than females. The 75th percentile H_Y score for Males is 3 as opposed to 2.5 for females. However the median H_Y scores for both males and females are the aproxomately equal (2). 
+
+Medication:
+The median Levodopa equivalent dose for males is much higher than that for females. Males also have greater variation in the medication dose than females, but this can also be due to the fact that total number of females in the study is far less than males (5 females and 11 males),
+
+Comparing MMSE, there are zero values missing for males and females, the mean is 27.04 for males and 27.89 for females. The standard deviation is 2.39 and 1.62. 
+Having a look at the age of the participants, the average for male participants were 64.8, whereas the average for female participants were 65.56.
+
+```{r}
+patientStudy$Group <- as.factor( patientStudy$Group )
+patientStudy$Sex <- as.factor( patientStudy$Sex )
+```
+
+
+```{r}
+Group_characteristics <- patientStudy %>%
+  select("Group","Age","Length_Parkinson","H_Y","Medication","Sex") 
+
+ggplot(Group_characteristics,aes(x = Age,fill = Sex))+
+  geom_histogram(binwidth = 5,position = "dodge")+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = Sex,y = Age))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = Sex,y = Length_Parkinson))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = H_Y,fill = Sex))+
+  geom_histogram(binwidth = 0.5)+
+  facet_wrap(~Group)
+
+ggplot(Group_characteristics,aes(x = Sex,y = H_Y))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+
+ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
+  geom_boxplot()+
+  facet_wrap(~Group)
+
+
+
+```
+# Looking at how the control variables correlate with each other
+```{r}
+# TODO we should just select the columns we want to calculate the correlation.
+
+patientStudy %>%
+  select("Age","Length_Parkinson","Medication","MMSE") %>%
+cor()
+```
+
+With increase in age, there is a corresponding increase in Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
+
+Additionally, we see that patieant with longer length of Parkison's receive a higher dose of medication. There is a strong correlation of .66.
+
+There is a negative correlation of -.33 of the mini mental metal state examination (MMSE) with each increase in unit of Parkinson's length.
+
+
+
+```{r}
+patientStudy %>%
+group_by("Subject")
+```
+
+
+# Regarding the variable Handedness:
+Based on background research on the handedness variable, analysis can be done that either treats this variable as continuous as it is recorded in the raw data, or it can be converted to a discrete variable depending on the interpretation that we desire.
+
+
+```{r}
+ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Age vs. Parkinson length") +
+  labs(x= "Age in years" , y="Length in years of Parkinsons")
+```
+
+```{r}
+ggplot(patientStudy, aes(x=Age)) +
+  geom_histogram() +
+   ggtitle("Age") +
+  labs(x= "Age in years") +
+  facet_wrap(~ Sex)
+```
+
+
+The above plot shows how many subjects for female and male have participanted in the study.
+
+# Looking at length of Parkinson by Age
+
+We generated scatter and boxplots to look at the variability in the length of Parkinson in the diseased group. Subjects with Parkinson have a wide variation in the length of disease. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of disease is remarkable, from 5 to almost 25 years. 
+
+```{r}
+ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
+  geom_point() +
+  ggtitle("Controls vs. Parkinsons") +
+  labs(x= "Age in years") +
+  facet_wrap(~ Group)
+```
+```{r}
+library(ggbeeswarm)
+patientStudy %>%
+  filter(Group==1) %>%
+ggplot(aes(x = Age, y = Length_Parkinson)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_quasirandom(fill = "lightseagreen", 
+               colour = "lightseagreen") 
+
+```
+
+# Looking at Disfluencies between diseased and control group and exploring differences in disfluencies by sex
+
+We explored the distribution and variation of two types of disfluencies, reformulation and filled pauses, between the disease and control group.We were curious if the differences are similar in both sexes. We would like to point out though that the numbers of females in the 2 groups, diseased and control, are dispropotionately low. We would like to point out that in this dataset:
+
+Group is a factor variable
+ 1 = patients with Parkinson (Parkinson group) 
+ 0 = control
+
+Sex is a factor variable 
+0 = Male
+1= Female
+
+We see that under normal condition and under noise masking, the median value of reformulation disfluency is higher and the median value of the filled pause is lower in the diseased group when compared to the control. 
+However, when we further group by sex, we see differences between the genders regarding these 2 disfluencies, reformulation and filled pause, under the two different conditions, normal and noise masking. WE see that while the males follow the overall trend seen at "Group" (disease vs control) level, female diseased subjects under noise masking show differing trend. Female diseased subjects have lower median value of reformulation and higher median value of filled pauses than the control. This is an interesting trend which warrants further exploration. The differences in disfluencies between the genders may not emerge as a significant finding due to the small sample size of females in this study.  
+
+
+
+```{r}
+ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group under Normal Condition") +
+  labs(x= "Group", y="Reformulate") 
+ 
+
+ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group and Sex under Normal Condition") +
+  labs(x= "Group", y="Reformulate") +
+  facet_wrap(~ Sex)
+
+ggplot(patientStudy, aes(x=Group, y=Nois_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group under Noise Masking") +
+  labs(x= "Group", y="Reformulate") 
+
+ggplot(patientStudy, aes(x=Group, y=Nois_Reformulation)) +
+  geom_boxplot() +
+  ggtitle("Reformulation by Group and Sex under Noise Masking") +
+  labs(x= "Group", y="Reformulate") +
+  facet_wrap(~ Sex)
+```
+
+
+```{r}
+ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group under Normal Condition") +
+  labs(x= "Group", y="Filled Pause")
+
+ggplot(patientStudy, aes(x=Group, y=Nrm_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group and Sex under Normal Condition ") +
+  labs(x= "Group", y="Filled Pause")+
+  facet_wrap(~ Sex)
+
+ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group under Noise Masking") +
+  labs(x= "Group", y="Filled Pause")
+
+ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
+  geom_boxplot() + 
+  ggtitle("Filled Pause by Group and Sex under Noise Masking") +
+  labs(x= "Group", y="Filled Pause")+
+  facet_wrap(~ Sex)
+  
+```
+
+# Thoughtful Discussion
+There are some N/As but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the over all analysis.
+TODO: Additions
