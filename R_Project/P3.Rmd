@@ -272,5 +272,5 @@ ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
 ```
 
 # Overall Impression 
-There are some N/As but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. The results from most graphs and tables agree with what the authors have in the paper, however small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the over all analysis. Also, we are fear that any meanigful differences between genders may not emerge due to the small sample size of females in this study. 
+From the intial EDA we discovered that the distributions of most variables are highly skewed. This could be due to the small sample size. There are several N/As for some of the variables but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. Small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the overall analysis. Also, we fear that any meanigful differences between genders may not emerge due to the small sample size of females in this study. 
 TODO: Additions
