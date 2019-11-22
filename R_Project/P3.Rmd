@@ -29,7 +29,7 @@ There is a potential geographic bias based on differences on the regional select
 
 # EDA 
 
-We folowed all the exploratory data methods to look at the variables of interest. 
+We followed all the exploratory data methods to look at the variables of interest. 
 Looking at the raw values. ◦dplyr::glimpse()
 Computing summary statistics of the variables of interest. 
 Visualizing data
@@ -273,4 +273,3 @@ ggplot(patientStudy, aes(x=Group, y=Nois_FilledPause)) +
 
 # Overall Impression 
 From the intial EDA we discovered that the distributions of most variables are highly skewed. This could be due to the small sample size. There are several N/As for some of the variables but these can be identified and removed if needed.  We did not encounter any major problems during our initial data exploration. Small sample size and skewed distribution of variables make us wonder if we can draw any meanigful inference from the overall analysis. Also, we fear that any meanigful differences between genders may not emerge due to the small sample size of females in this study. 
-TODO: Additions
