@@ -50,7 +50,7 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 
 ### First glimpse
 A good EDA starts with a glimpse at the data or a raw view of the data. 
-```{r, echo=T, results='hide'}
+```{r}
 glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
 ```
@@ -81,12 +81,11 @@ _We have determined from this inspection that zero is male and one is female in 
 ### Overall Summary statistics
 The data table for the study has 34 observations for 53 variables. There are 16 controls and 18 Parkinson patients in this study. Variables "Sex" and "Group" are factor variables. There are 11 males and 5 females in the control group and 14 males and 4 females in the Parkinson group. The distribution of most variables is highly skewed. There are 0 values missing for all variables except H_Y, which has 3 missing values. 
 
-### Summary statistic for control variables
-For the purpose of this study the authors considered age, gender, handedness, Mini Mental State Examination (MMSE) and Raven's progressive matrices (RAVEN) as control variabes and tried to minimize their variability between the two groups. We looked at the mean and standard deviations of these variables. Our results matched with what the authors report in the paper (Table 3, page 9/28). 
-
 ### Regarding the control variable Handedness:
 Based on background research on the handedness variable, analysis can be done that either treats this variable as continuous as it is recorded in the raw data, or it can be converted to a discrete variable depending on the interpretation that we desire.
 
+### Summary statistic for control variables - Table 3 in the paper
+For the purpose of this study the authors considered age, gender, handedness, Mini Mental State Examination (MMSE) and Raven's progressive matrices (RAVEN) as control variabes and tried to minimize their variability between the two groups. We looked at the mean and standard deviations of these variables. Our results matched with what the authors report in the paper (Table 3, page 9/28). 
 ```{r}
 Table3_AllDataPatient <- patientStudy %>%
   group_by(Group)%>%
