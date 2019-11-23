@@ -202,7 +202,7 @@ ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
 
 
 
-### Looking at "Length of Parkinson" by "Age"" and "Sex""
+### Looking at "Length of Parkinson" by "Age" and "Sex""
 
 We generated scatter and boxplots to look at the variability in the length of Parkinson in the disease group. Subjects with Parkinson have a wide variation in the length of disease. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of disease is remarkable, from 5 to almost 25 years. 
 
