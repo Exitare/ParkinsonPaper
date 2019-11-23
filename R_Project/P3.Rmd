@@ -1,5 +1,5 @@
 ---
-title: "Markdown"
+title: Group 4 - P3 submission
 author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
 output: html_document
 ---
@@ -50,7 +50,7 @@ allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 
 ### First glimpse
 A good EDA starts with a glimpse at the data or a raw view of the data. 
-```{r}
+```{r, echo=T, results='hide'}
 glimpse(allDataPatientStudyDS)
 glimpse(allDataPDGroupsStudyDS)
 ```
