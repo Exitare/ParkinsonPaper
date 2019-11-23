@@ -19,7 +19,7 @@ library(skimr)
  
 # Discussion of Issues
 
-The first issue we encountered was that the code for most of the variables were not familiar to us as we are not Parkinson's experts. The way we resolved this issue was by trial and error methods to determine what variables went into which tables.
+The first issue we encountered was that the code for most of the variables were not familiar to us as we are not Parkinson's experts. The way we resolved this issue was by trial and error and by comparing summary statistics of variables with what is reported in the paper. 
 
 Another issue with the data is that sex is coded as either a one or zero (bolean value). We attempted to diagnose this by searching the paper for gender and sex however there was no immediate explanation. Next, we downloaded the supplementary files from the original version of the paper online. In the supplementary S1, gender appears to be coded as "m" or "v" which further complicates the issue of variable naming inconsistency. There may be a bias on gender because there more than triple males in the study group and more than double the number of males in the control. Also, the sample sizes are well under 30 thus are too small.
 

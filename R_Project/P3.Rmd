@@ -19,9 +19,9 @@ library(skimr)
  
 # Discussion of Issues
 
-The first issue we encountered was that the code for most of the variables were not familiar to us as we are not Parkinson's experts. The way we resolved this issue was by trial and error methods to determine what variables went into which tables.
+The first issue we encountered was that the code for most of the variables were not familiar to us as we are not Parkinson's experts. The way we resolved this issue was by trial and error and by comparing summary statistics of variables with what is reported in the paper. 
 
-Another issue with the data is that sex is coded as either a one or zero (bolean value). We attempted to diagnose this by searching the paper for gender and sex however there was no immediate explanation. Next, we downloaded the supplementary files from the original version of the paper online. In the supplementary S1, gender appears to be coded as "m" or "v" which further complicates the issue of variable naming inconsistency. There may be a bias on gender because there more than triple males in the study group and more than double the number of males in the control. Also, the sample sizes are well under 30 thus are too small.
+Another issue with the data is that sex is coded as either a one or zero (bolean value). We attempted to diagnose this by searching the paper for gender and sex however there was no immediate explanation. Next, we downloaded the supplementary files from the original version of the paper online. In the supplementary S1, gender appears to be coded as "m" or "v" which further complicates the issue of variable naming inconsistency. There may be a bias on gender because there more than triple males in the study group and more than double the number of males in the control. Also, the sample sizes are well under 30 and thus too small perhaps to have enough power to reject null hypothesis, in case the effect size is not large enough. 
 
 The paper does comment that data that varied more than 2 SD from the mean for a particular condition being measured were removed from analysis. The percentatge of data loss has been reported for each condition being measured. However we are skeptical how that could change the overall analysis.
 
@@ -78,11 +78,14 @@ patientStudy %>%
 
 _We have determined from this inspection that zero is male and one is female in the boolean binary._
 
-## Overall Summary statistics
-The data table for the study has 34 observations for 53 variables. There are 16 controls and 18 Parkinson patients in this study. Variables "Sex" and "Group" are factor variables. There are 11 males and 5 females in the control group and 14 males and 4 females in the Parkinson group. The distribution of most variables is highly skewed. 
+### Overall Summary statistics
+The data table for the study has 34 observations for 53 variables. There are 16 controls and 18 Parkinson patients in this study. Variables "Sex" and "Group" are factor variables. There are 11 males and 5 females in the control group and 14 males and 4 females in the Parkinson group. The distribution of most variables is highly skewed. There are 0 values missing for all variables except H_Y, which has 3 missing values. 
 
-## Summary statistic for control variables
+### Summary statistic for control variables
 For the purpose of this study the authors considered age, gender, handedness, Mini Mental State Examination (MMSE) and Raven's progressive matrices (RAVEN) as control variabes and tried to minimize their variability between the two groups. We looked at the mean and standard deviations of these variables. Our results matched with what the authors report in the paper (Table 3, page 9/28). 
+
+### Regarding the control variable Handedness:
+Based on background research on the handedness variable, analysis can be done that either treats this variable as continuous as it is recorded in the raw data, or it can be converted to a discrete variable depending on the interpretation that we desire.
 
 ```{r}
 Table3_AllDataPatient <- patientStudy %>%
@@ -97,6 +100,23 @@ Table3_AllDataPatient%>%
 
 
 ```
+### Comparing control variables between the 2 genders and 2 groups
+There is a greater variation in the handedness in males (control group: males sd = 49.58; females = 4.546097) as opposed to the females. The greater variation in handedness in males is also present in the disease group.  
+
+There is also greater variation in age in males (control group: males sd = 9.63; females = 5.31) as opposed to females in the control group. The variability in age decreases for males (sd = 8.97) and increases for females (sd = 7.37) in the disease group. 
+
+However, the greater variability in the control variables for males is not unexected considering small sample size and the fact that there are very few females in each group.  
+
+
+```{r}
+(Group_gender_controlV <- patientStudy %>%
+  group_by(Group,Sex)%>%
+  select("Age", "Handedness","MMSE","RAVEN")%>%
+  summarize(mean_age = mean(Age), sd_age = sd(Age), mean_handedness = mean(Handedness), sd_handedness = sd(Handedness), mean_MMSE = mean(MMSE), sd_MMSE = sd(MMSE), mean_raven = mean(RAVEN), sd_raven = sd(RAVEN)))
+
+
+```
+
 
 
 ## Visualization
@@ -116,8 +136,6 @@ Hoehn and Yahr scale is used to describe the symptom progression of Parkinson di
 Medication:
 The median Levodopa equivalent dose for males is much higher than that for females. Males also have greater variation in the medication dose than females, but this can also be due to the fact that total number of females in the study is far less than males (5 females and 11 males),
 
-Comparing MMSE, there are zero values missing for males and females, the mean is 27.04 for males and 27.89 for females. The standard deviation is 2.39 and 1.62. 
-Having a look at the age of the participants, the average for male participants were 64.8, whereas the average for female participants were 65.56.
 
 ```{r}
 patientStudy$Group <- as.factor( patientStudy$Group )
@@ -157,13 +175,7 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 
 
 ```
-# Looking at how variables correlate with each other
-```{r}
-
-patientStudy%>%
-  select("Age","Medication","Length_Parkinson","MMSE", "Nrm_FilledPause")%>%
-cor()
-```
+### Looking at how variables correlate with each other
 
 With increase in age, there is a corresponding increase in Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
 
@@ -175,14 +187,11 @@ We thought it might be a good idea to check if a patient with Parkinson's has a 
 
 
 ```{r}
-patientStudy %>%
-group_by("Subject")
+
+patientStudy%>%
+  select("Age","Medication","Length_Parkinson","MMSE", "Nrm_FilledPause")%>%
+cor()
 ```
-
-
-# Regarding the variable Handedness:
-Based on background research on the handedness variable, analysis can be done that either treats this variable as continuous as it is recorded in the raw data, or it can be converted to a discrete variable depending on the interpretation that we desire.
-
 
 ```{r}
 ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
@@ -191,20 +200,12 @@ ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
   labs(x= "Age in years" , y="Length in years of Parkinsons")
 ```
 
-```{r}
-ggplot(patientStudy, aes(x=Age)) +
-  geom_histogram() +
-   ggtitle("Age") +
-  labs(x= "Age in years") +
-  facet_wrap(~ Sex)
-```
 
 
-The above plot shows how many subjects for female and male have participanted in the study.
+### Looking at "Length of Parkinson" by "Age"" and "Sex""
 
-# Looking at length of Parkinson by Age
+We generated scatter and boxplots to look at the variability in the length of Parkinson in the disease group. Subjects with Parkinson have a wide variation in the length of disease. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of disease is remarkable, from 5 to almost 25 years. 
 
-We generated scatter and boxplots to look at the variability in the length of Parkinson in the diseased group. Subjects with Parkinson have a wide variation in the length of disease. It is interesting to see that there is at least one person under 50 with length of Parkinson of 20 years. The heterogeniety in the patient population with respect to the length of disease is remarkable, from 5 to almost 25 years. 
 
 ```{r}
 ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
@@ -224,7 +225,7 @@ ggplot(aes(x = Age, y = Length_Parkinson)) +
 
 ```
 
-# Looking at Disfluencies between diseased and control group and exploring differences in disfluencies by sex
+### Looking at Disfluencies between diseased and control group and exploring differences in disfluencies by sex
 
 We explored the distribution and variation of two types of disfluencies, reformulation and filled pauses, between the disease and control group.We were curious if the differences are similar in both sexes. We would like to point out though that the number of females in the 2 groups, diseased and control, is dispropotionately low. We would like to point out that in this dataset:
 
@@ -238,8 +239,6 @@ Sex is a factor variable
 
 We see that under normal condition and under noise masking, the median value of reformulation disfluency is higher and the median value of the filled pause is lower in the diseased group when compared to the control. 
 However, when we further group by sex, we see differences between the genders regarding these 2 disfluencies, reformulation and filled pause, under the two different conditions, normal and noise masking. WE see that while the males follow the overall trend seen at "Group" (disease vs control) level, female diseased subjects under noise masking show differing trend. Female diseased subjects have lower median value of reformulation and higher median value of filled pauses than the control. This is an interesting trend which warrants further exploration. The differences in disfluencies between the genders may not emerge as a significant finding due to the small sample size of females in this study.  
-
-
 
 ```{r}
 ggplot(patientStudy, aes(x=Group, y=Nrm_Reformulation)) +
