@@ -40,7 +40,7 @@ Visualizing data
 ### Load data
 ```{r}
 
-patientStudy <- read_csv("tidied_dataset.csv")
+patientStudy <- read_csv(here::here("tidied-dataset.csv"))
 
 ```
 ```{r, include=FALSE}
