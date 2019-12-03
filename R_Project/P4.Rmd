@@ -187,6 +187,14 @@ Final_Fig2_table_2 <- Fig2_table_2 %>%
 Final_Fig2_table_2   
 ```
 
+# Table 10
+```{r Table 10}
+
+model <- lm(age~sex,data = allDataPatientStudyDS )
+
+table <- allDataPatientStudyDS %>%
+  select 
+```
 
 
 
