@@ -20,13 +20,12 @@ library(ggplot2)
 ## Load data
 ```{r}
 
-
 allPatients = file.path("../","All_Data_Patientstudy.sav")
-allDataPDGroups = file.path("../", "All_Data_PD_GroupPatientstudy.sav")
-
 allDataPatientStudyDS = read_sav(allPatients)
-allDataPDGroupsStudyDS = read_sav(allDataPDGroups)
 
+```
+```{r}
+glimpse(tidied_dataset)
 ```
 
 
@@ -38,72 +37,89 @@ glimpse(allDataPDGroupsStudyDS)
 ```{r}
 variable.names(allDataPatientStudyDS)
 ```
-
 ```{r}
-#Table 1 recreated using allDataPDGroupsStudyDS dataframe
-Table1_allDataPDGroups <- allDataPDGroupsStudyDS %>%
-select("Age", "Medication", "Length_Parkinson","H_Y")
+allDataPatientStudyDS %>%
+mutate(Sex = factor(Sex, labels = c("Female", "Male")),Group = factor(Group, labels = c("PD", "Control")))
 
-Table1_allDataPDGroups
-skimr::skim(Table1_allDataPDGroups)
+
+```
+```{r}
+tidied_dataset <- tidied_dataset %>%
+mutate(Sex = factor(Sex, labels = c("Male", "Female")),Group = factor(Group, labels = c("Control", "PD")))
 ```
 ```{r}
 #Table 1 recreated using allDataPatientStudyDS dataframe
-Table1_AllDataPatient <- allDataPatientStudyDS %>%
-  filter(Group == "1")%>%
+Table1 <- tidied_dataset %>%
+  filter(Group == "PD")%>%
 select("Group","Age", "Medication", "Length_Parkinson","H_Y")
 
 
-Table1_AllDataPatient
-skimr::skim(Table1_AllDataPatient)
+Table1
+skimr::skim(Table1)
 ```
 
 
-
 ```{r}
-#Table 3 using allDataPatientStudyDS
+#Table 3 using tidied_dataset
 
-Table2_AllDataPatient <- allDataPatientStudyDS %>%
+Table3 <- tidied_dataset %>%
+  select("Age", "Sex", "Handedness","MMSE","RAVEN","Group")%>%
   group_by(Group)%>%
-select("Age", "Sex", "Handedness","MMSE","RAVEN")
+  summarize(mean_age = mean(Age), mean_handedness = mean(Handedness),mean_MMSE = mean(MMSE), mean_Raven = mean(RAVEN), count = n())
 
-Table2_AllDataPatient
-skimr::skim(Table2_AllDataPatient)
+Table3_count_gender <- tidied_dataset %>%
+  select("Sex","Group")%>%
+  group_by(Group,Sex)%>%
+  summarize(count=n())
 
-Table2_AllDataPatient%>%
-  group_by(Group)%>%
-  count(Sex=="1")
+Table3
+Table3_count_gender
 
-
-  
-
-
-```
-
-```{r}
-#Table 4 using allDataPatientStudyDS
-Table3_AllDataPatient <- allDataPatientStudyDS %>%
-  group_by(Group)%>%
-select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm","NPro_Dur_Ruis")
-Table3_AllDataPatient
-skimr::skim(Table3_AllDataPatient)
 
 ```
 
 
 ```{r}
-#Table 9 using allDataPatientStudyDS
-Table9_Raw_AllDataPatient <- allDataPatientStudyDS %>%
+#Table 4 using tidied dataset
+Table4 <- tidied_dataset %>%
+  group_by(Group)%>%
+select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_Ruis", "NPro_Dur_Norm","NPro_Dur_Ruis")%>%
+  summarise(mean_Phonologic_Fluency = mean(Phonologic_Fluency), sd_phonologic_fluency = sd(Phonologic_Fluency),
+            mean_Semantic_Fluency = mean(Semantic_Fluency), sd_Semantic_Fluency = sd(Semantic_Fluency),
+            mean_BNT = mean(BNT), sd_BNT = sd(BNT),
+            mean_Syllsec_Norm = mean(SyllSec_Norm), sd_Syllsec_Norm = sd(SyllSec_Norm),
+            mean_Syllsec_Ruis = mean(SyllSec_Ruis), sd_SyllSec_Ruis = sd(SyllSec_Ruis),
+            mean_NPro_Dur_Norm = mean(NPro_Dur_Norm), sd_NPro_Dur_Norm = sd(NPro_Dur_Norm),
+            mean_NPro_Dur_Ruis = mean(NPro_Dur_Ruis), sd_NPro_Dur_Ruis = sd(NPro_Dur_Ruis))
+Table4
+
+```
+
+
+```{r}
+#Table 9 using using tidied dataset
+Table9_raw <- tidied_dataset %>%
   select("Group","Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
 
-Table9_AllDataPatient <- Table9_Raw_AllDataPatient %>%
+Table9 <- Table9_raw %>%
   gather (key = "Error_type", value = "Total_Number",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
-Table9_AllDataPatient
+Table9
 
-aggregate(Total_Number~Error_type+Group,Table9_AllDataPatient,sum)
+aggregate(Total_Number~Error_type+Group,Table9,sum)
  
 
 ```
+```{r}
+Fig1_raw <- allDataPatientStudyDS %>%
+  select("Group","Pct_NormRep","Pct_NoiseRep","PctSemNoiseRep","PctSemNormRep")%>%
+  filter(Group == 0)%>%
+  summarise(mean_Pct_NormRep=mean(Pct_NormRep),mean_Pct_NoiseRep=mean(Pct_NoiseRep),mean_PctSemNoiseRep=mean(PctSemNoiseRep),mean_PctSemNormRep=mean(PctSemNormRep))
+ 
+ 
+ 
+  
+```
+
 
 ```{r}
 Fig1_Raw_table <- allDataPatientStudyDS %>% 
