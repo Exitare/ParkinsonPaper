@@ -71,3 +71,23 @@ Network Trash Folder
 Temporary Items
 .apdisk
 >>>>>>> 6aaf9b6fe05b019b66c27b5112dfdf67bf5be571
+
+*.tmp
+
+# Word temporary
+~$*.doc*
+
+# Word Auto Backup File
+Backup of *.doc*
+
+# Excel temporary
+~$*.xls*
+
+# Excel Backup File
+*.xlk
+
+# PowerPoint temporary
+~$*.ppt*
+
+# Visio autosave temporary files
+*.~vsd*
