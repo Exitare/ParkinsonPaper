@@ -23,7 +23,10 @@ library(ggplot2)
 allPatients = file.path("../","All_Data_Patientstudy.sav")
 allDataPatientStudyDS = read_sav(allPatients)
 
+tidied_dataset = read.csv("tidied-dataset.csv")
+
 ```
+
 ```{r}
 glimpse(tidied_dataset)
 ```
