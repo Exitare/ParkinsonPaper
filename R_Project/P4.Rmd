@@ -35,7 +35,7 @@ glimpse(tidied_dataset)
 ## First glimpse
 ```{r}
 glimpse(allDataPatientStudyDS)
-glimpse(allDataPDGroupsStudyDS)
+
 ```
 ```{r}
 variable.names(allDataPatientStudyDS)
