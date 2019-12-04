@@ -75,7 +75,7 @@ Table3_count_gender <- tidied_dataset %>%
   group_by(Group,Sex)%>%
   summarize(count=n())
 
-Table3
+t(Table3)
 Table3_count_gender
 
 
@@ -115,78 +115,73 @@ aggregate(Total_Number~Error_type+Group,Table9,sum)
 ```{r}
 Fig1_raw <- allDataPatientStudyDS %>%
   select("Group","Pct_NormRep","Pct_NoiseRep","PctSemNoiseRep","PctSemNormRep")%>%
-  filter(Group == 0)%>%
-  summarise(mean_Pct_NormRep=mean(Pct_NormRep),mean_Pct_NoiseRep=mean(Pct_NoiseRep),mean_PctSemNoiseRep=mean(PctSemNoiseRep),mean_PctSemNormRep=mean(PctSemNormRep))
+  filter(Group == 0,complete.cases(Pct_NormRep,Pct_NoiseRep,PctSemNoiseRep,PctSemNormRep))%>%
+  summarise(mean_Pct_NormRep=mean(Pct_NormRep),mean_Pct_NoiseRep=mean(Pct_NoiseRep),mean_PctSemNoiseRep=mean(PctSemNoiseRep),mean_PctSemNormRep=mean(PctSemNormRep, count=n()))
  
- 
+Fig1_table <- Fig1_raw %>%
+  gather (key = "Error", value = "Percentage_Repaired","mean_PctSemNormRep","mean_PctSemNoiseRep","mean_Pct_NormRep","mean_Pct_NoiseRep")
+
+ggplot(data = Fig1_table) +
+  geom_col(mapping = aes(x = Error,y=Percentage_Repaired), binwidth = 0.5)
  
   
 ```
-
-
 ```{r}
-Fig1_Raw_table <- allDataPatientStudyDS %>% 
-  select("Group","Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N") 
+Fig2_raw <- allDataPatientStudyDS %>%
+  select("Group","Pct_NormRep","Pct_NoiseRep","PctSemNoiseRep","PctSemNormRep")%>%
+  filter(complete.cases(Pct_NormRep,Pct_NoiseRep,PctSemNoiseRep,PctSemNormRep))%>%
+  group_by(Group)%>%
+  summarise(mean_Pct_NormRep=mean(Pct_NormRep),mean_Pct_NoiseRep=mean(Pct_NoiseRep),mean_PctSemNoiseRep=mean(PctSemNoiseRep),mean_PctSemNormRep=mean(PctSemNormRep, count=n()))
+ 
+Fig2_table <- Fig2_raw %>%
+  gather (key = "Error", value = "Percentage_Repaired","mean_PctSemNormRep","mean_PctSemNoiseRep","mean_Pct_NormRep","mean_Pct_NoiseRep")
 
-Fig1_table <- Fig1_Raw_table %>%
-  gather (key = "Error_Repaired", value = "Total_Number",-Group,"Nrm_Sem_Rep", "Norm_ErrorsRepaired", "TotalErrorsNorm_N", "Nois_Sem_Rep","Noise_ErrorsRepaired", "TotalErrorsNois_N")
-Fig1_table
-
-Fig1 <- aggregate(Total_Number~Error_Repaired+Group,Fig1_table,sum)  
-
-
-
-#Fig1%>%
-#group_by(Group)%>%
-#filter(Error_Repaired == "Nrm_Sem_Rep",Error_Repaired == "TotalErrorsNorm_N") %>%
-#mutate(Perc_Sem_Error_Repaired = (Nrm_Sem_Rep / TotalErrorsNorm_N) * 100)
+Fig2_table %>%
+  ggplot() +
+  geom_col(mapping = aes(x = Error,y=Percentage_Repaired), binwidth = 0.5)+
+  facet_wrap(~Group)
   
-  
-#  mutate(Total_Nrm_Sem_Rep=sum(Nrm_Sem_Rep), Total_Norm_ErrorsRepaired=sum(Norm_ErrorsRepaired), Total_TotalErrorsNorm_N = sum(TotalErrorsNorm_N), perc_Nrm_Sem_Rep = Total_Nrm_Sem_Rep / Total_TotalErrorsNorm_N, perc_Nrm_Total_Rep = Total_Norm_ErrorsRepaired/Total_TotalErrorsNorm_N,Total_Nois_Sem_Rep = sum(Nois_Sem_Rep),Total_Noise_ErrorsRepaired=sum(Noise_ErrorsRepaired),Total_TotalErrorsNois_N = sum(TotalErrorsNois_N), perc_Nois_Sem_Rep = Total_Nois_Sem_Rep / Total_TotalErrorsNois_N, perc_Nois_Total_Rep = Total_Noise_ErrorsRepaired/Total_TotalErrorsNois_N) 
-#Fig1_Raw_table 
-
 ```
 
 ```{r}
-#Fig1_table<- Fig1_Raw_table %>%
-  #gather (key = "Error_Repaired", value = "Total_Number_Repaired",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
-#Table9_AllDataPatient
-```
-
-```{r}
-Fig2_Raw_table <- allDataPatientStudyDS %>% 
-  select("Group","DisfluenciesNorm", "DisfluenciesNoise", "SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N" ) 
-Fig2_table <- Fig2_Raw_table %>%
-  gather (key = "Error_Type", value = "Total_Number",-Group,"DisfluenciesNorm", "DisfluenciesNoise", "SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N")
-Fig2_table
-
-Fig2 <- aggregate(Total_Number~Error_Type+Group,Fig2_table,sum)  
-
-
-```
-```{r}
-Fig2_table_2 <- allDataPatientStudyDS %>%
+Fig_table <- allDataPatientStudyDS %>%
   group_by(Group)%>%
   select("SemErrors_Norm","Nrm_Sem_Rep", "SemErrors_Noise","Nois_Sem_Rep", "Norm_ErrorsRepaired","Noise_ErrorsRepaired","TotalErrorsNorm_N","TotalErrorsNois_N" )%>%
-  mutate(Nrm_Perc_Sem_Error_Repaired = Nrm_Sem_Rep/SemErrors_Norm * 100, Nois_Per_Sem_Error_Repaired = Nois_Sem_Rep/SemErrors_Noise *100, Nrm_Perc_Total_Error_Rep = Norm_ErrorsRepaired/TotalErrorsNorm_N *100, Nois_Per_Total_Error_Rep = Noise_ErrorsRepaired/TotalErrorsNois_N *100)
+  mutate(Nrm_Perc_Sem_Error_Repaired = Nrm_Sem_Rep/SemErrors_Norm * 100, Nois_Per_Sem_Error_Repaired = Nois_Sem_Rep/SemErrors_Noise *100, Nrm_Perc_Total_Error_Rep = Norm_ErrorsRepaired/TotalErrorsNorm_N *100, Nois_Per_Total_Error_Rep = Noise_ErrorsRepaired/TotalErrorsNois_N *100)%>%
+replace(is.na(.), 0)%>%
+group_by(Group) %>% 
+summarize(Mean_Nrm_Perc_Sem_Error_Repaired = mean(Nrm_Perc_Sem_Error_Repaired),Mean_Nois_Per_Sem_Error_Repaired = mean(Nois_Per_Sem_Error_Repaired), Mean_Nrm_Perc_Total_Error_Repaired = mean(Nrm_Perc_Total_Error_Rep),Mean_Nois_Perc_Total_Error_Repaired = mean(Nois_Per_Total_Error_Rep))%>%
+rename(Sem_Normal=Mean_Nrm_Perc_Sem_Error_Repaired, Sem_Noise=Mean_Nois_Per_Sem_Error_Repaired, Tot_Normal=Mean_Nrm_Perc_Total_Error_Repaired, Tot_Noise=Mean_Nois_Perc_Total_Error_Repaired)
 
 
-Fig2_table_2
 
-skimr::skim(Fig2_table_2)
+Fig_table
+
+skimr::skim(Fig_table)
 
 
 ```
 ```{r}
-Final_Fig2_table_2 <- Fig2_table_2 %>%
-  #filter_all(any_vars(!is.na(.))) %>%
-  replace(is.na(.), 0)%>%
-  group_by(Group) %>% 
-  summarize(Mean_Nrm_Perc_Sem_Error_Repaired = mean(Nrm_Perc_Sem_Error_Repaired),Mean_Nois_Per_Sem_Error_Repaired = mean(Nois_Per_Sem_Error_Repaired), Mean_Nrm_Perc_Total_Error_Repaired = mean(Nrm_Perc_Total_Error_Rep),Mean_Nois_Perc_Total_Error_Repaired = mean(Nois_Per_Total_Error_Rep))
+Fig1 <- Fig_table  %>%
+  filter(Group==0)%>%
+  gather (key = "Error", value = "Mean_Percentage_Repaired","Sem_Normal","Sem_Noise","Tot_Normal","Tot_Noise" )%>%
+  ggplot() +
+  geom_col(mapping = aes(x = Error,y=Mean_Percentage_Repaired), binwidth = 0.5)
+ 
 
-Final_Fig2_table_2   
+Fig1
 ```
 
+
+```{r}
+Fig2 <- Fig_table  %>%
+  gather (key = "Error", value = "Mean_Percentage_Repaired","Sem_Normal","Sem_Noise","Tot_Normal","Tot_Noise" )%>%
+  ggplot() +
+  geom_col(mapping = aes(x = Error,y=Mean_Percentage_Repaired), binwidth = 0.5)+
+  facet_wrap(~Group)
+
+Fig2
+```
 
 
 
