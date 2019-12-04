@@ -75,7 +75,7 @@ Table3_count_gender <- tidied_dataset %>%
   group_by(Group,Sex)%>%
   summarize(count=n())
 
-Table3
+t(Table3)
 Table3_count_gender
 
 
@@ -95,7 +95,7 @@ select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_R
             mean_NPro_Dur_Norm = mean(NPro_Dur_Norm), sd_NPro_Dur_Norm = sd(NPro_Dur_Norm),
             mean_NPro_Dur_Ruis = mean(NPro_Dur_Ruis), sd_NPro_Dur_Ruis = sd(NPro_Dur_Ruis))
 Table4
-
+print(Table4, n = 15)
 ```
 
 
@@ -187,14 +187,7 @@ Final_Fig2_table_2 <- Fig2_table_2 %>%
 Final_Fig2_table_2   
 ```
 
-# Table 10
-```{r Table 10}
 
-model <- lm(age~sex,data = allDataPatientStudyDS )
-
-table <- allDataPatientStudyDS %>%
-  select 
-```
 
 
 
