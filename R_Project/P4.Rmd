@@ -95,7 +95,7 @@ select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_R
             mean_NPro_Dur_Norm = mean(NPro_Dur_Norm), sd_NPro_Dur_Norm = sd(NPro_Dur_Norm),
             mean_NPro_Dur_Ruis = mean(NPro_Dur_Ruis), sd_NPro_Dur_Ruis = sd(NPro_Dur_Ruis))
 Table4
-
+print(Table4, n = 15)
 ```
 
 
@@ -182,6 +182,7 @@ Fig2 <- Fig_table  %>%
 
 Fig2
 ```
+
 
 
 
