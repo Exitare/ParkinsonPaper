@@ -13,6 +13,7 @@ library(haven)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(moderndive)
 ```
  
 
@@ -182,7 +183,57 @@ Fig2 <- Fig_table  %>%
 
 Fig2
 ```
+```{r}
+Regression_table <- tidied_dataset %>%
+  filter(Group == "PD",complete.cases(H_Y) )
+```
 
+```{r}
+Model_sem_fluency <- lm(Semantic_Fluency~H_Y,Regression_table)
+
+get_regression_table(Model_sem_fluency)
+broom::glance(Model_sem_fluency)
+```
+
+```{r}
+Model_BNT <- lm(BNT~H_Y,Regression_table)
+get_regression_table(Model_BNT)
+broom::glance(Model_BNT)
+```
+```{r}
+Model_ProductionSpeedNormal <- lm(SyllSec_Norm~H_Y,Regression_table)
+get_regression_table(Model_ProductionSpeedNormal)
+broom::glance(Model_ProductionSpeedNormal)
+```
+```{r}
+Model_ProductionSpeedNoise <- lm(SyllSec_Ruis~H_Y,Regression_table)
+get_regression_table(Model_ProductionSpeedNoise)
+broom::glance(Model_ProductionSpeedNoise)
+```
+```{r}
+Model_DurationNorm <- 
+lm(NPro_Dur_Norm~H_Y,Regression_table)
+get_regression_table(Model_DurationNorm)
+broom::glance(Model_DurationNorm)
+```
+```{r}
+Model_DurationNoise <- 
+lm(NPro_Dur_Ruis~H_Y,Regression_table)
+get_regression_table(Model_DurationNoise)
+broom::glance(Model_DurationNoise)
+```
+```{r}
+Model_PectSemErr_Rep <- 
+lm(PctSemNormRep~H_Y,allDataPatientStudyDS)
+get_regression_table(Model_PectSemErr_Rep)
+broom::glance(Model_PectSemErr_Rep)
+```
+```{r}
+Model_Ntw_Perc_Sem_NErrors <- 
+lm(Ntw_Perc_Sem_NErrors~H_Y,allDataPatientStudyDS)
+get_regression_table(Model_Ntw_Perc_Sem_NErrors)
+broom::glance(Model_Ntw_Perc_Sem_NErrors)
+```
 
 
 
