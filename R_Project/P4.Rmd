@@ -14,6 +14,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(moderndive)
+library(infer)
 ```
  
 
@@ -234,6 +235,67 @@ lm(Ntw_Perc_Sem_NErrors~H_Y,allDataPatientStudyDS)
 get_regression_table(Model_Ntw_Perc_Sem_NErrors)
 broom::glance(Model_Ntw_Perc_Sem_NErrors)
 ```
+# t test to test if the difference in the mean BNT score between the control and PD group is not equal to 0.
+Inspite of non-normal distribution, a two-sided t test for unequal variance (Welch's two sample t test) was done. With a p value of 0.494 there is not enough evidence to support the alternate hypothesis. In other words we fail to reject the Null hypothesis that difference between the mean BNT score for the two groups is equal to 0. 
+```{r}
+tidied_dataset%>%
+  ggplot(aes(x=BNT)) +
+  geom_histogram()+
+  facet_wrap(~Group)
+  
+  
+```
 
+```{r}
+t.test(BNT ~ Group, data = tidied_dataset, null = 0, 
+       alternative = "two.sided",var.equal = TRUE)
+```
+```{r}
+t.test(Phonologic_Fluency ~ Group, data = tidied_dataset, null = 0, 
+       alternative = "two.sided",var.equal = TRUE)
+```
 
+```{r}
+t.test(Semantic_Fluency ~ Group, data = tidied_dataset, null = 0, 
+       alternative = "two.sided",var.equal = TRUE)
+```
+```{r}
+library("car")
+qqPlot(BNT~Group,tidied_dataset)
+```
+```{r}
+library("car")
+qqPlot(Phonologic_Fluency~Group,tidied_dataset)
+```
+```{r}
+library("car")
+qqPlot(Semantic_Fluency~Group,tidied_dataset)
+```
+
+```{r}
+lmMod <- lm(BNT ~ Group, data=tidied_dataset)
+par(mfrow=c(2,2)) # init 4 charts in 1 panel
+plot(lmMod)
+```
+```{r}
+lmMod_Semantic <- lm(Semantic_Fluency ~ Group, data=tidied_dataset)
+lmMod_Semantic_aug <- broom::augment(lmMod_Semantic)%>%
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point()
+lmMod_Semantic_aug
+```
+```{r}
+lmMod_BNT <- lm(BNT ~ Group, data=tidied_dataset)
+lmMod_BNT_aug <- broom::augment(lmMod_BNT)%>%
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point()
+lmMod_BNT_aug
+```
+```{r}
+lmMod_Phonologic_Fluency <- lm(Phonologic_Fluency ~ Group, data=tidied_dataset)
+lmMod_Phonologic_Fluency_aug <- broom::augment(lmMod_Phonologic_Fluency)%>%
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point()
+lmMod_Phonologic_Fluency_aug
+```
 
