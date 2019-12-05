@@ -16,6 +16,7 @@ library(ggplot2)
 library(moderndive)
 library(infer)
 library(phia)
+library(tidyverse)
 ```
  
 
@@ -85,7 +86,7 @@ select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_R
             mean_NPro_Dur_Norm = mean(NPro_Dur_Norm), sd_NPro_Dur_Norm = sd(NPro_Dur_Norm),
             mean_NPro_Dur_Ruis = mean(NPro_Dur_Ruis), sd_NPro_Dur_Ruis = sd(NPro_Dur_Ruis))
 Table4
-print(Table4, n = 15)
+t(Table4)
 ```
 
 
@@ -271,6 +272,11 @@ lmMod_Phonologic_Fluency_aug <- broom::augment(lmMod_Phonologic_Fluency)%>%
   ggplot(aes(x = .fitted, y = .resid)) +
   geom_point()
 lmMod_Phonologic_Fluency_aug
+```
+```{r}
+
+Error_type <- read_csv("Error_type.csv")
+
 ```
 ```{r}
 Error_type <- Error_type%>%
