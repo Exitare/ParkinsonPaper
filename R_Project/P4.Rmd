@@ -15,6 +15,7 @@ library(tidyr)
 library(ggplot2)
 library(moderndive)
 library(infer)
+library(phia)
 ```
  
 
@@ -297,5 +298,77 @@ lmMod_Phonologic_Fluency_aug <- broom::augment(lmMod_Phonologic_Fluency)%>%
   ggplot(aes(x = .fitted, y = .resid)) +
   geom_point()
 lmMod_Phonologic_Fluency_aug
+```
+```{r}
+Error_type <- Error_type%>%
+  mutate(Group = factor(Group), Noise = factor(Noise))
+```
+
+```{r}
+model_Reformulation <- lm(Reformulation ~ Group + Noise, data=Error_type)
+
+anova (model_Reformulation)
+
+moderndive::get_regression_table(lm(Reformulation ~ Group + Noise, data=Error_type))
+```
+```{r}
+model_Reformulation_interact <- lm(Reformulation ~ Group * Noise, data=Error_type, 
+        contrasts = list(Group = contr.sum, 
+                         Noise = contr.sum))
+Anova(model_Reformulation_interact, type = 2)
+```
+```{r}
+plot(interactionMeans(model_Reformulation_interact))
+```
+
+```{r}
+model_Filled_Pause <- lm(Filled_Pause ~ Group + Noise, data=Error_type)
+
+anova (model_Filled_Pause)
+
+moderndive::get_regression_table(lm(Reformulation ~ Group + Noise, data=Error_type))
+```
+```{r}
+model_Filled_Pause_interact <- lm(Filled_Pause ~ Group * Noise, data=Error_type, 
+        contrasts = list(Group = contr.sum, 
+                         Noise = contr.sum))
+Anova(model_Filled_Pause_interact, type = 2)
+```
+```{r}
+plot(interactionMeans(model_Filled_Pause_interact))
+```
+
+```{r}
+model_Repetition <- lm(Repetition ~ Group + Noise, data=Error_type)
+
+anova (model_Repetition)
+
+moderndive::get_regression_table(lm(Repetition ~ Group + Noise, data=Error_type))
+```
+```{r}
+model_Repetition_interact <- lm(Repetition ~ Group * Noise, data=Error_type, 
+        contrasts = list(Group = contr.sum, 
+                         Noise = contr.sum))
+Anova(model_Repetition_interact, type = 2)
+```
+```{r}
+plot(interactionMeans(model_Repetition_interact))
+```
+
+```{r}
+model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
+
+anova (model_Disfluencies)
+
+moderndive::get_regression_table(lm(Disfluencies ~ Group + Noise, data=Error_type))
+```
+```{r}
+model_Disfluencies_Interaction <- lm( Disfluencies ~ Group * Noise, data=Error_type, 
+        contrasts = list(Group = contr.sum, 
+                         Noise = contr.sum))
+Anova(model_Disfluencies_Interaction, type = 2)
+```
+```{r}
+plot(interactionMeans(model_Disfluencies_Interaction))
 ```
 
