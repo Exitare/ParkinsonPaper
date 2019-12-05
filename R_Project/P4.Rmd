@@ -22,12 +22,9 @@ library(phia)
 
 ## Load data
 ```{r}
-
 allPatients = file.path("../","All_Data_Patientstudy.sav")
 allDataPatientStudyDS = read_sav(allPatients)
-
 tidied_dataset = read.csv("tidied-dataset.csv")
-
 ```
 
 ```{r}
@@ -38,7 +35,6 @@ glimpse(tidied_dataset)
 ## First glimpse
 ```{r}
 glimpse(allDataPatientStudyDS)
-
 ```
 ```{r}
 variable.names(allDataPatientStudyDS)
@@ -46,8 +42,6 @@ variable.names(allDataPatientStudyDS)
 ```{r}
 allDataPatientStudyDS %>%
 mutate(Sex = factor(Sex, labels = c("Female", "Male")),Group = factor(Group, labels = c("PD", "Control")))
-
-
 ```
 ```{r}
 tidied_dataset <- tidied_dataset %>%
@@ -58,8 +52,6 @@ mutate(Sex = factor(Sex, labels = c("Male", "Female")),Group = factor(Group, lab
 Table1 <- tidied_dataset %>%
   filter(Group == "PD")%>%
 select("Group","Age", "Medication", "Length_Parkinson","H_Y")
-
-
 Table1
 skimr::skim(Table1)
 ```
@@ -67,21 +59,16 @@ skimr::skim(Table1)
 
 ```{r}
 #Table 3 using tidied_dataset
-
 Table3 <- tidied_dataset %>%
   select("Age", "Sex", "Handedness","MMSE","RAVEN","Group")%>%
   group_by(Group)%>%
   summarize(mean_age = mean(Age), mean_handedness = mean(Handedness),mean_MMSE = mean(MMSE), mean_Raven = mean(RAVEN), count = n())
-
 Table3_count_gender <- tidied_dataset %>%
   select("Sex","Group")%>%
   group_by(Group,Sex)%>%
   summarize(count=n())
-
 t(Table3)
 Table3_count_gender
-
-
 ```
 
 
@@ -106,14 +93,11 @@ print(Table4, n = 15)
 #Table 9 using using tidied dataset
 Table9_raw <- tidied_dataset %>%
   select("Group","Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
-
 Table9 <- Table9_raw %>%
   gather (key = "Error_type", value = "Total_Number",-Group,"Nrm_Reformulation","Nrm_FilledPause","Nrm_Repetition","Nois_Reformulation","Nois_FilledPause", "Nois_Repetition")
 Table9
-
 aggregate(Total_Number~Error_type+Group,Table9,sum)
  
-
 ```
 ```{r}
 Fig1_raw <- allDataPatientStudyDS %>%
@@ -123,7 +107,6 @@ Fig1_raw <- allDataPatientStudyDS %>%
  
 Fig1_table <- Fig1_raw %>%
   gather (key = "Error", value = "Percentage_Repaired","mean_PctSemNormRep","mean_PctSemNoiseRep","mean_Pct_NormRep","mean_Pct_NoiseRep")
-
 ggplot(data = Fig1_table) +
   geom_col(mapping = aes(x = Error,y=Percentage_Repaired), binwidth = 0.5)
  
@@ -138,7 +121,6 @@ Fig2_raw <- allDataPatientStudyDS %>%
  
 Fig2_table <- Fig2_raw %>%
   gather (key = "Error", value = "Percentage_Repaired","mean_PctSemNormRep","mean_PctSemNoiseRep","mean_Pct_NormRep","mean_Pct_NoiseRep")
-
 Fig2_table %>%
   ggplot() +
   geom_col(mapping = aes(x = Error,y=Percentage_Repaired), binwidth = 0.5)+
@@ -155,14 +137,8 @@ replace(is.na(.), 0)%>%
 group_by(Group) %>% 
 summarize(Mean_Nrm_Perc_Sem_Error_Repaired = mean(Nrm_Perc_Sem_Error_Repaired),Mean_Nois_Per_Sem_Error_Repaired = mean(Nois_Per_Sem_Error_Repaired), Mean_Nrm_Perc_Total_Error_Repaired = mean(Nrm_Perc_Total_Error_Rep),Mean_Nois_Perc_Total_Error_Repaired = mean(Nois_Per_Total_Error_Rep))%>%
 rename(Sem_Normal=Mean_Nrm_Perc_Sem_Error_Repaired, Sem_Noise=Mean_Nois_Per_Sem_Error_Repaired, Tot_Normal=Mean_Nrm_Perc_Total_Error_Repaired, Tot_Noise=Mean_Nois_Perc_Total_Error_Repaired)
-
-
-
 Fig_table
-
 skimr::skim(Fig_table)
-
-
 ```
 ```{r}
 Fig1 <- Fig_table  %>%
@@ -171,7 +147,6 @@ Fig1 <- Fig_table  %>%
   ggplot() +
   geom_col(mapping = aes(x = Error,y=Mean_Percentage_Repaired), binwidth = 0.5)
  
-
 Fig1
 ```
 
@@ -182,7 +157,6 @@ Fig2 <- Fig_table  %>%
   ggplot() +
   geom_col(mapping = aes(x = Error,y=Mean_Percentage_Repaired), binwidth = 0.5)+
   facet_wrap(~Group)
-
 Fig2
 ```
 ```{r}
@@ -192,7 +166,6 @@ Regression_table <- tidied_dataset %>%
 
 ```{r}
 Model_sem_fluency <- lm(Semantic_Fluency~H_Y,Regression_table)
-
 get_regression_table(Model_sem_fluency)
 broom::glance(Model_sem_fluency)
 ```
@@ -306,9 +279,7 @@ Error_type <- Error_type%>%
 
 ```{r}
 model_Reformulation <- lm(Reformulation ~ Group + Noise, data=Error_type)
-
 anova (model_Reformulation)
-
 moderndive::get_regression_table(lm(Reformulation ~ Group + Noise, data=Error_type))
 ```
 ```{r}
@@ -323,9 +294,7 @@ plot(interactionMeans(model_Reformulation_interact))
 
 ```{r}
 model_Filled_Pause <- lm(Filled_Pause ~ Group + Noise, data=Error_type)
-
 anova (model_Filled_Pause)
-
 moderndive::get_regression_table(lm(Reformulation ~ Group + Noise, data=Error_type))
 ```
 ```{r}
@@ -340,9 +309,7 @@ plot(interactionMeans(model_Filled_Pause_interact))
 
 ```{r}
 model_Repetition <- lm(Repetition ~ Group + Noise, data=Error_type)
-
 anova (model_Repetition)
-
 moderndive::get_regression_table(lm(Repetition ~ Group + Noise, data=Error_type))
 ```
 ```{r}
@@ -357,9 +324,7 @@ plot(interactionMeans(model_Repetition_interact))
 
 ```{r}
 model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
-
 anova (model_Disfluencies)
-
 moderndive::get_regression_table(lm(Disfluencies ~ Group + Noise, data=Error_type))
 ```
 ```{r}
@@ -371,4 +336,23 @@ Anova(model_Disfluencies_Interaction, type = 2)
 ```{r}
 plot(interactionMeans(model_Disfluencies_Interaction))
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

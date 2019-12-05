@@ -141,10 +141,40 @@ patientStudy$Group <- as.factor( patientStudy$Group )
 patientStudy$Sex <- as.factor( patientStudy$Sex )
 ```
 
+```{r}
+Group_characteristics_1 <- patientStudy %>%
+  select("Group","Age","Length_Parkinson","H_Y","Medication","Sex") %>%
+  filter (Group == 1)
+
+ggplot(Group_characteristics_1,aes(x = Age))+
+  geom_histogram(binwidth = 5)+
+  ggtitle("Distribution of Age in Parkinson group") +
+  labs(x= "Age in years")
+
+ggplot(Group_characteristics_1,aes(x = H_Y))+
+  geom_histogram(binwidth = 0.5)+
+ggtitle("Distribution of Stage of Parkinson - Hoehn and Yahr scale") +
+  labs(x= "H_Y score")
+
+ggplot(Group_characteristics_1,aes(x = Length_Parkinson))+
+  geom_histogram(binwidth = 2)+
+  ggtitle("Distribution of Length of Parkinson ") +
+  labs(x= "Length of Parkinson in Years")
+
+ggplot(Group_characteristics_1,aes(x = Medication))+
+  geom_histogram(binwidth = 50)+
+  ggtitle("Distribution of Medication Dose in Levodopa Equivalent ") +
+  labs(x= "Medication Dose in Levodopa Equivalent")
+
+```
 
 ```{r}
 Group_characteristics <- patientStudy %>%
   select("Group","Age","Length_Parkinson","H_Y","Medication","Sex") 
+
+ggplot(Group_characteristics,aes(x = Group,y = Age))+
+  geom_boxplot()+
+  ggtitle("Age distribution by group")
 
 ggplot(Group_characteristics,aes(x = Age,fill = Sex))+
   geom_histogram(binwidth = 5,position = "dodge")+
@@ -174,6 +204,11 @@ ggplot(Group_characteristics,aes(x = Sex,y = Medication))+
 
 
 ```
+```{r}
+ggplot(Group_characteristics,aes(x = Group,y = H_Y))+
+  geom_boxplot()
+```
+
 ### Looking at how variables correlate with each other
 
 With increase in age, there is a corresponding increase in Parkinson's length which makes sense and is expected. This is distict from occurance of Parkinson's.
@@ -188,17 +223,44 @@ We thought it might be a good idea to check if a patient with Parkinson's has a 
 ```{r}
 
 patientStudy%>%
-  select("Age","Medication","Length_Parkinson","MMSE", "Nrm_FilledPause")%>%
-cor()
+  select("Age","MMSE")%>%
+  cor()
+```
+```{r}
+patientStudy%>%
+  filter(Group ==1, !is.na(H_Y))%>%
+  select("Age","Medication","Length_Parkinson","MMSE", "H_Y")%>%
+  cor()
 ```
 
 ```{r}
-ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
+ggplot(patientStudy, aes(x=Age, y=MMSE)) +
   geom_smooth(method = "lm", se = FALSE) +
-  ggtitle("Age vs. Parkinson length") +
-  labs(x= "Age in years" , y="Length in years of Parkinsons")
+  ggtitle("Age vs. MMSE in sample population") +
+  labs(x= "Age in years" , y="MMSE")
+```
+```{r}
+patientStudy %>% filter(Group==1)%>%
+ggplot(aes(x=Age, y=H_Y)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("Age vs. H_Y in PD Group") +
+  labs(x= "Age in years" , y="H_Y")
+```
+```{r}
+patientStudy %>% filter(Group==1)%>%
+ggplot(aes(x=MMSE, y=H_Y)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggtitle("MMSE vs H_Y in PD Group") +
+  labs(x= "MMSE score" , y="H_Y score")
 ```
 
+```{r}
+patientStudy%>%
+ggplot(aes(x=Age, y=H_Y,colour = factor(Group))) +
+  geom_point(method = "lm", se = FALSE) +
+  ggtitle("Age vs. Parkinson_stage by disease group") +
+  labs(x= "Age in years" , y="H_Y score")
+```
 
 
 ### Looking at "Length of Parkinson" by "Age" and "Sex""
@@ -209,9 +271,8 @@ We generated scatter and boxplots to look at the variability in the length of Pa
 ```{r}
 ggplot(patientStudy, aes(x=Age, y=Length_Parkinson)) +
   geom_point() +
-  ggtitle("Controls vs. Parkinsons") +
-  labs(x= "Age in years") +
-  facet_wrap(~ Group)
+  ggtitle("Age vs length of Parkinson") +
+  labs(x= "Age in years") 
 ```
 ```{r}
 library(ggbeeswarm)
@@ -219,6 +280,7 @@ patientStudy %>%
   filter(Group==1) %>%
 ggplot(aes(x = Age, y = Length_Parkinson)) +
   geom_boxplot(outlier.shape = NA) +
+  ggtitle("Age vs length of Parkinson in Parkinson group")+
   geom_quasirandom(fill = "lightseagreen", 
                colour = "lightseagreen") 
 
