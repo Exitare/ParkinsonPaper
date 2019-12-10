@@ -77,8 +77,8 @@ mutate(Sex = factor(Sex, labels = c("Male", "Female")),Group = factor(Group, lab
 </span>
 
 <span><font color="ff1493"> 
-## Table 1
-We were able to create table 1 as it appears in the paper, getting al the same values for means, range and standard deviation of age, medication, length of medication and parkinson stage (H-Y)
+## Table 1 Mean (SD) age, length of Parkinson, medication usage and score on the Hoehn Yahr scale
+We were able to create table 1 as it appears in the paper, getting all the same values for means, range and standard deviation of age, medication, length of medication and parkinson stage (H-Y)
 </span>
 
 ```{r}
@@ -91,7 +91,7 @@ skimr::skim(Table1)
 ```
 
 <span><font color="ff1493"> 
-## Table 3
+## Table 3 Control variable measures
 Summary statistics for all control variables were replicated and they matched th evalues in the paper.
 </span>
 
@@ -109,7 +109,7 @@ t(Table3)
 Table3_count_gender
 ```
 <span><font color="ff1493"> 
-## Table 4
+## Table 4 Mean (SD) performance of PD and control group on the speech production tasks.
 We were able to replicate table 4 as it appears in the paper. Just to point out that COWAT is a combined term for phonologic fluency and semantic fluency. So we have replicated the numbers for COWAT without calling it out. 
 </span>
 
@@ -129,7 +129,8 @@ Table4
 t(Table4)
 ```
 <span><font color="ff1493"> 
-## Table 9
+## Table 9 Total number of disfluencies per error type in the network descriptions.
+
 Table 9 was replicated without issues.
 </span>
 
@@ -143,6 +144,7 @@ Table9
 aggregate(Total_Number~Error_type+Group,Table9,sum)
  
 ```
+
 <span><font color="ff1493"> 
 ## Figure 1 and Figure 2
 Replicating figure 1 and Fig 2 was hard. We found that the values for "percentage of semantic error repaired", provided in the raw dataset were not actually percentages. Closer analysis revealed that the values for "percentage semantic error repaired " may have been fractions. We recalculated percentage of semantic error repaired and used those values to come up with fig 1 and fig2. 
@@ -162,6 +164,8 @@ ggplot(data = Fig1_table) +
  
   
 ```
+
+
 ```{r}
 #Replicating figure 2 using r=the values from raw dataset
 Fig2_raw <- allDataPatientStudyDS %>%
@@ -178,9 +182,12 @@ Fig2_table %>%
   facet_wrap(~Group)
   
 ```
+
+
 <span><font color="ff1493">
 ### Recalculating the values for percentage of semantic error and using that for replicating fig 1 and fig 2. The figues still do not resemble with what is in the paper. 
 </span>
+
 ```{r}
 Fig_table <- allDataPatientStudyDS %>%
   group_by(Group)%>%
@@ -193,6 +200,7 @@ rename(Sem_Normal=Mean_Nrm_Perc_Sem_Error_Repaired, Sem_Noise=Mean_Nois_Per_Sem_
 Fig_table
 skimr::skim(Fig_table)
 ```
+
 ```{r}
 Fig1 <- Fig_table  %>%
   filter(Group==0)%>%
@@ -212,13 +220,30 @@ Fig2 <- Fig_table  %>%
   facet_wrap(~Group)
 Fig2
 ```
+
+
+<span><font color="ff1493">
+# Table 10: Regression analysis of Parkinson's disease measures
+
+There was a descrepency for the independant variables. 4 were given: Cognitive performance, speech production, external speech perception, internal speech perception. The raw data comprises the first two independent variables was relativly clear except for the COWAT, which was distributed amongst multiple raw values. For the perception task there was no reference to rhyming in the raw data and it was not made clear in the text of the paper what that variable was. Through trial and error we were able to replicate the first two columns.
+
+```{r}
+(normModel <- lm(Norm_ErrorsRepaired ~ MMSE + RAVEN + BNT, data = allDataPatientStudyDS))
+(noiseModel <- lm(Noise_ErrorsRepaired ~ MMSE + RAVEN + BNT, data = allDataPatientStudyDS))
+get_regression_table(normModel)
+get_regression_table(noiseModel)
+
+```
+
+
 <span><font color="ff1493">
 # Table 11: Regression analysis of Parkinson's disease measures
-Simple linear refressions were run for task performances as explained by Parkinson's disease measures. Duration of PD, Medication and H_Y score were used as disease measures. 
 
-Since there are a few NA vales for H-Y variales, we used only the complete case of H_Y for our analysis. Table 11 reports just the significant findings. 
+Simple linear regressions were run for task performances as explained by Parkinson's disease measures. Duration of PD, Medication and H_Y score were used as disease measures. 
 
+Since there are a few NA vales for H_Y variales, we used only the complete case of H_Y for our analysis. Table 11 reports just the significant findings. Based on analysis we found that only BNT was significantly explained by H_Y (p-value = 0.003), however the authors found a number of task performances significant (p-value = 0.05). Our intercept, mean squared, r squared and p-values are different from all the values that the authors have reported. Another thing we found strange was that the authors have reported p-values for the r-squared number and not for the slope coefficents (estimates). The explanatory power is given by the r-squared value and the p-value does nothing to add to that information. R-squared is used to estimate have good the model is. In other words it explains the fraction of the total variation in response variable that is explained by explanatory variables. In order to determine if the relationship between the response and explanatory variables is significant we need to look at the p-values associated with the estimates (slope-coefficents).
 
+<span>
 
 ```{r}
 Regression_table <- tidied_dataset %>%
@@ -270,15 +295,18 @@ lm(Ntw_Perc_Sem_NErrors~H_Y,allDataPatientStudyDS)
 get_regression_table(Model_Ntw_Perc_Sem_NErrors)
 broom::glance(Model_Ntw_Perc_Sem_NErrors)
 ```
-# t test to test if the difference in the mean BNT score between the control and PD group is not equal to 0.
-Inspite of non-normal distribution, a two-sided t test for unequal variance (Welch's two sample t test) was done. With a p value of 0.494 there is not enough evidence to support the alternate hypothesis. In other words we fail to reject the Null hypothesis that difference between the mean BNT score for the two groups is equal to 0. 
-```{r}
+
+# t test to test for differences in the means of speech variables in pd and control groups
+
+Inspite of non-normal distribution that we saw for many variables the authors used paired t-tests to look for a difference in means between the two groups. We went ahead and checked all the assumptions for t-tests, which includes random sampling, normal distribution, large sample sizes (> 30) and homogeneity of variance (homoscedasticity). We generated qq-plots to check for assumption of normality and generated fitted vs. residual plots to check for assumption of homoscedasticity. We meet the assumptions for normality and homoscedasticity were correct. However its worth noting that the sampling was not random for the study. Most of the control subjects were partners of the parkinson patients and the parkinson patients were also not randomly selected. The n for the study is also small, with just 18 parkinson patients and 16 control patients. 
+Overall there was no difference in the mean of speech production variables between the control and the pd group.
+
+
+```{r Checking for distribution of BNT by group}
 tidied_dataset%>%
   ggplot(aes(x=BNT)) +
   geom_histogram()+
   facet_wrap(~Group)
-  
-  
 ```
 
 ```{r}
@@ -294,24 +322,22 @@ t.test(Phonologic_Fluency ~ Group, data = tidied_dataset, null = 0,
 t.test(Semantic_Fluency ~ Group, data = tidied_dataset, null = 0, 
        alternative = "two.sided",var.equal = TRUE)
 ```
-```{r}
+
+```{r Checking for assumptions of normality for BNT}
 library("car")
 qqPlot(BNT~Group,tidied_dataset)
 ```
-```{r}
+
+```{r Checking for assumptions of normality for Phonologic Fluency}
 library("car")
 qqPlot(Phonologic_Fluency~Group,tidied_dataset)
 ```
-```{r}
+
+```{r Checking for assumptions of normality for Sematic Fluency}
 library("car")
 qqPlot(Semantic_Fluency~Group,tidied_dataset)
 ```
 
-```{r}
-lmMod <- lm(BNT ~ Group, data=tidied_dataset)
-par(mfrow=c(2,2)) # init 4 charts in 1 panel
-plot(lmMod)
-```
 ```{r}
 lmMod_Semantic <- lm(Semantic_Fluency ~ Group, data=tidied_dataset)
 lmMod_Semantic_aug <- broom::augment(lmMod_Semantic)%>%
@@ -319,6 +345,7 @@ lmMod_Semantic_aug <- broom::augment(lmMod_Semantic)%>%
   geom_point()
 lmMod_Semantic_aug
 ```
+
 ```{r}
 lmMod_BNT <- lm(BNT ~ Group, data=tidied_dataset)
 lmMod_BNT_aug <- broom::augment(lmMod_BNT)%>%
@@ -326,6 +353,7 @@ lmMod_BNT_aug <- broom::augment(lmMod_BNT)%>%
   geom_point()
 lmMod_BNT_aug
 ```
+
 ```{r}
 lmMod_Phonologic_Fluency <- lm(Phonologic_Fluency ~ Group, data=tidied_dataset)
 lmMod_Phonologic_Fluency_aug <- broom::augment(lmMod_Phonologic_Fluency)%>%
@@ -333,21 +361,21 @@ lmMod_Phonologic_Fluency_aug <- broom::augment(lmMod_Phonologic_Fluency)%>%
   geom_point()
 lmMod_Phonologic_Fluency_aug
 ```
-```{r}
 
+```{r Load error_type file}
 Error_type <- read_csv("Error_type.csv")
-
 ```
+
 ```{r}
 Error_type <- Error_type%>%
   mutate(Group = factor(Group), Noise = factor(Noise))
 ```
 
-<ul style="color:deeppink"> 
-## ANOVA Results for Disfluencies
+<span><font color="ff1493">
+# ANOVA Results for Disfluencies
 
-#### For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based on group. Our results here do not match the paper. For the control group it seems like the total disfluencies is slightly but not significantly more under noise condition. However the paper finds that there is a significant interaction of condition and group.
-</ul>
+For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based on group. Our results here do not match the paper. For the control group it seems like the total disfluencies is slightly but not significantly more under noise condition. However the paper finds that there is a significant interaction of disfluency type and group.
+</span>
 
 ```{r}
 model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
