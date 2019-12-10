@@ -1,7 +1,12 @@
 ---
-title: "Markdown"
+title: "Group 4 - Parkinson's P4"
+author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
 output: html_document
 ---
+
+<ul style="color:deeppink"> 
+
+</ul>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -283,6 +288,14 @@ Error_type <- Error_type%>%
   mutate(Group = factor(Group), Noise = factor(Noise))
 ```
 
+<ul style="color:deeppink"> 
+
+## ANOVA Results for Disfluencies
+
+#### For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based.
+
+</ul>
+
 ```{r}
 model_Reformulation <- lm(Reformulation ~ Group + Noise, data=Error_type)
 anova (model_Reformulation)
@@ -294,6 +307,7 @@ model_Reformulation_interact <- lm(Reformulation ~ Group * Noise, data=Error_typ
                          Noise = contr.sum))
 Anova(model_Reformulation_interact, type = 2)
 ```
+
 ```{r}
 plot(interactionMeans(model_Reformulation_interact))
 ```
