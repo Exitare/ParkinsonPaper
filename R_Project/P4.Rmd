@@ -375,7 +375,15 @@ Error_type <- Error_type%>%
 <span><font color="ff1493">
 # ANOVA Results for Disfluencies
 
-For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based on group. Our results here do not match the paper. For the control group it seems like the total disfluencies is slightly but not significantly more under noise condition. However the paper finds that there is a significant interaction of disfluency type and group.
+For total disfluencies we found no significant results for main and interaction effects of group and noise.The adjusted mean plot for the interaction model shows that mean adjusted value of total disfluencies is higher for the Parkinson group than the control under noise masking. 
+
+For reformulation, we do see a significant group effect. The interaction plots for noise and group show that the Parkinson group has much higher mean reformulation error than the control group under noise masking. The average reformulation error increases 2.198 units for the Parkinson group. This result agrees with the results in the paper.
+
+The adjusted mean value of filled pauses is much higher in the control group, compared to the Parkinson group,under normal conditions. However, under noise masking the adjusted mean  values of filled pauses decreases for the conytrol group, while it increases for the Parkinson group. Both, interaction and main effects are non-significant for filled pause.
+
+For Repetition, we found no significant results for main and interaction effects of group and noise.The adjusted mean plot for the interaction model shows that mean adjusted value of Repetition errors is higher for the Parkinson group than the control under noise masking. 
+
+Our results here somewhat agrees with the paper. It seems that control group has higher average filled pause error than the parkinson group under normal condition. While the Parkinson group has higher average reformulation and repetion errors than the control group under normal condition. 
 </span>
 
 
@@ -383,6 +391,10 @@ For all disfluencies we found no significant results for noise, interaction betw
 model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
 anova (model_Disfluencies)
 moderndive::get_regression_table(lm(Disfluencies ~ Group + Noise, data=Error_type))
+
+```
+```{r}
+plot(interactionMeans(model_Disfluencies))
 ```
 
 ```{r}
@@ -401,6 +413,11 @@ model_Reformulation <- lm(Reformulation ~ Group + Noise, data=Error_type)
 anova (model_Reformulation)
 moderndive::get_regression_table(lm(Reformulation ~ Group + Noise, data=Error_type))
 ```
+
+```{r}
+plot(interactionMeans(model_Reformulation))
+```
+
 ```{r}
 model_Reformulation_interact <- lm(Reformulation ~ Group * Noise, data=Error_type, 
         contrasts = list(Group = contr.sum, 
@@ -418,6 +435,10 @@ anova (model_Filled_Pause)
 moderndive::get_regression_table(lm(Reformulation ~ Group + Noise, data=Error_type))
 ```
 ```{r}
+plot(interactionMeans(model_Filled_Pause))
+```
+
+```{r}
 model_Filled_Pause_interact <- lm(Filled_Pause ~ Group * Noise, data=Error_type, 
         contrasts = list(Group = contr.sum, 
                          Noise = contr.sum))
@@ -433,6 +454,11 @@ anova (model_Repetition)
 moderndive::get_regression_table(lm(Repetition ~ Group + Noise, data=Error_type))
 ```
 ```{r}
+plot(interactionMeans(model_Repetition))
+```
+
+
+```{r}
 model_Repetition_interact <- lm(Repetition ~ Group * Noise, data=Error_type, 
         contrasts = list(Group = contr.sum, 
                          Noise = contr.sum))
@@ -440,21 +466,6 @@ Anova(model_Repetition_interact, type = 2)
 ```
 ```{r}
 plot(interactionMeans(model_Repetition_interact))
-```
-
-```{r}
-model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
-anova (model_Disfluencies)
-moderndive::get_regression_table(lm(Disfluencies ~ Group + Noise, data=Error_type))
-```
-```{r}
-model_Disfluencies_Interaction <- lm( Disfluencies ~ Group * Noise, data=Error_type, 
-        contrasts = list(Group = contr.sum, 
-                         Noise = contr.sum))
-Anova(model_Disfluencies_Interaction, type = 2)
-```
-```{r}
-plot(interactionMeans(model_Disfluencies_Interaction))
 ```
 
 
