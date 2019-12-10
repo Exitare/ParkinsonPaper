@@ -4,15 +4,16 @@ author: "Meena Mishra, Raphael Kirchgaessner, Brian Karlberg"
 output: html_document
 ---
 
-<ul style="color:deeppink"> 
-
-</ul>
+<span style=“color:green”>
+</span>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
+<span style=“color:green”>
 # Load Libraries
+</span>
 ```{r}
 library(haven)
 library(dplyr)
@@ -24,27 +25,34 @@ library(phia)
 library(tidyverse)
 ```
  
+<span style=“color:green”>
+# Load data
+</span>
 
-
-## Load data
 ```{r}
 allPatients = file.path("../","All_Data_Patientstudy.sav")
 allDataPatientStudyDS = read_sav(allPatients)
 tidied_dataset = read.csv("tidied-dataset.csv")
 ```
 
+<span style=“color:green”>
+# EDA
+</span>
+
 ```{r}
 glimpse(tidied_dataset)
 ```
 
-
-## First glimpse
 ```{r}
 glimpse(allDataPatientStudyDS)
 ```
-```{r}
+```{r include=FALSE}
 variable.names(allDataPatientStudyDS)
 ```
+
+<ul style="color:deeppink"> 
+## Relabel columns
+</ul>
 ```{r}
 allDataPatientStudyDS %>%
 mutate(Sex = factor(Sex, labels = c("Female", "Male")),Group = factor(Group, labels = c("PD", "Control")))
@@ -53,6 +61,15 @@ mutate(Sex = factor(Sex, labels = c("Female", "Male")),Group = factor(Group, lab
 tidied_dataset <- tidied_dataset %>%
 mutate(Sex = factor(Sex, labels = c("Male", "Female")),Group = factor(Group, labels = c("Control", "PD")))
 ```
+
+<ul style="color:deeppink"> 
+# Replication section
+</ul>
+
+<ul style="color:deeppink"> 
+## Table 1
+</ul>
+
 ```{r}
 #Table 1 recreated using allDataPatientStudyDS dataframe
 Table1 <- tidied_dataset %>%
@@ -289,12 +306,27 @@ Error_type <- Error_type%>%
 ```
 
 <ul style="color:deeppink"> 
-
 ## ANOVA Results for Disfluencies
 
-#### For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based.
-
+#### For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based on group. Our results here do not match the paper. For the control group it seems like the total disfluencies is slightly but not significantly more under noise condition. However the paper finds that there is a significant interaction of condition and group.
 </ul>
+
+```{r}
+model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
+anova (model_Disfluencies)
+moderndive::get_regression_table(lm(Disfluencies ~ Group + Noise, data=Error_type))
+```
+
+```{r}
+model_Disfluencies_interact <- lm(Disfluencies ~ Group * Noise, data=Error_type, 
+        contrasts = list(Group = contr.sum, 
+                         Noise = contr.sum))
+Anova(model_Disfluencies_interact, type = 2)
+```
+
+```{r}
+plot(interactionMeans(model_Disfluencies_interact))
+```
 
 ```{r}
 model_Reformulation <- lm(Reformulation ~ Group + Noise, data=Error_type)
