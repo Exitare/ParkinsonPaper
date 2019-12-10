@@ -296,7 +296,7 @@ get_regression_table(Model_Ntw_Perc_Sem_NErrors)
 broom::glance(Model_Ntw_Perc_Sem_NErrors)
 ```
 
-# t test to test for differences in the means of speech variables in pd and control groups
+# t test for difference in the means of speech variables between Parkinson and control groups
 
 Inspite of non-normal distribution that we saw for many variables the authors used paired t-tests to look for a difference in means between the two groups. We went ahead and checked all the assumptions for t-tests, which includes random sampling, normal distribution, large sample sizes (> 30) and homogeneity of variance (homoscedasticity). We generated qq-plots to check for assumption of normality and generated fitted vs. residual plots to check for assumption of homoscedasticity. We meet the assumptions for normality and homoscedasticity were correct. However its worth noting that the sampling was not random for the study. Most of the control subjects were partners of the parkinson patients and the parkinson patients were also not randomly selected. The n for the study is also small, with just 18 parkinson patients and 16 control patients. 
 Overall there was no difference in the mean of speech production variables between the control and the pd group.
@@ -371,11 +371,13 @@ Error_type <- Error_type%>%
   mutate(Group = factor(Group), Noise = factor(Noise))
 ```
 
+
 <span><font color="ff1493">
 # ANOVA Results for Disfluencies
 
 For all disfluencies we found no significant results for noise, interaction between noise and group. For reformulation, we do see a significant effect on disfluency based on group. Our results here do not match the paper. For the control group it seems like the total disfluencies is slightly but not significantly more under noise condition. However the paper finds that there is a significant interaction of disfluency type and group.
 </span>
+
 
 ```{r}
 model_Disfluencies <- lm(Disfluencies ~ Group + Noise, data=Error_type)
