@@ -11,8 +11,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-<span style=“color:green”>
+<span><font color="ff1493">
+
 # Load Libraries
+
 </span>
 ```{r}
 library(haven)
@@ -25,8 +27,10 @@ library(phia)
 library(tidyverse)
 ```
  
-<span style=“color:green”>
+<span><font color="ff1493">
+
 # Load data
+
 </span>
 
 ```{r}
@@ -35,9 +39,12 @@ allDataPatientStudyDS = read_sav(allPatients)
 tidied_dataset = read.csv("tidied-dataset.csv")
 ```
 
-<span style=“color:green”>
+<span><font color="ff1493">
+
 # EDA
+
 </span>
+
 
 ```{r}
 glimpse(tidied_dataset)
@@ -50,9 +57,12 @@ glimpse(allDataPatientStudyDS)
 variable.names(allDataPatientStudyDS)
 ```
 
-<ul style="color:deeppink"> 
-## Relabel columns
-</ul>
+<span><font color="ff1493"> 
+
+## Relabeled columns
+
+</span>
+
 ```{r}
 allDataPatientStudyDS %>%
 mutate(Sex = factor(Sex, labels = c("Female", "Male")),Group = factor(Group, labels = c("PD", "Control")))
@@ -62,13 +72,14 @@ tidied_dataset <- tidied_dataset %>%
 mutate(Sex = factor(Sex, labels = c("Male", "Female")),Group = factor(Group, labels = c("Control", "PD")))
 ```
 
-<ul style="color:deeppink"> 
+<span><font color="ff1493">
 # Replication section
-</ul>
+</span>
 
-<ul style="color:deeppink"> 
+<span><font color="ff1493"> 
 ## Table 1
-</ul>
+We were able to create table 1 as it appears in the paper, getting al the same values for means, range and standard deviation of age, medication, length of medication and parkinson stage (H-Y)
+</span>
 
 ```{r}
 #Table 1 recreated using allDataPatientStudyDS dataframe
@@ -79,6 +90,10 @@ Table1
 skimr::skim(Table1)
 ```
 
+<span><font color="ff1493"> 
+## Table 3
+Summary statistics for all control variables were replicated and they matched th evalues in the paper.
+</span>
 
 ```{r}
 #Table 3 using tidied_dataset
@@ -93,7 +108,10 @@ Table3_count_gender <- tidied_dataset %>%
 t(Table3)
 Table3_count_gender
 ```
-
+<span><font color="ff1493"> 
+## Table 4
+We were able to replicate table 4 as it appears in the paper. Just to point out that COWAT is a combined term for phonologic fluency and semantic fluency. So we have replicated the numbers for COWAT without calling it out. 
+</span>
 
 ```{r}
 #Table 4 using tidied dataset
@@ -110,7 +128,10 @@ select("Phonologic_Fluency","Semantic_Fluency","BNT", "SyllSec_Norm", "SyllSec_R
 Table4
 t(Table4)
 ```
-
+<span><font color="ff1493"> 
+## Table 9
+Table 9 was replicated without issues.
+</span>
 
 ```{r}
 #Table 9 using using tidied dataset
@@ -122,7 +143,13 @@ Table9
 aggregate(Total_Number~Error_type+Group,Table9,sum)
  
 ```
-```{r}
+<span><font color="ff1493"> 
+## Figure 1 and Figure 2
+Replicating figure 1 and Fig 2 was hard. We found that the values for "percentage of semantic error repaired", provided in the raw dataset were not actually percentages. Closer analysis revealed that the values for "percentage semantic error repaired " may have been fractions. We recalculated percentage of semantic error repaired and used those values to come up with fig 1 and fig2. 
+</span>
+
+```{r }
+#Replicating figure 1 using r=the values from raw dataset
 Fig1_raw <- allDataPatientStudyDS %>%
   select("Group","Pct_NormRep","Pct_NoiseRep","PctSemNoiseRep","PctSemNormRep")%>%
   filter(Group == 0,complete.cases(Pct_NormRep,Pct_NoiseRep,PctSemNoiseRep,PctSemNormRep))%>%
@@ -136,6 +163,7 @@ ggplot(data = Fig1_table) +
   
 ```
 ```{r}
+#Replicating figure 2 using r=the values from raw dataset
 Fig2_raw <- allDataPatientStudyDS %>%
   select("Group","Pct_NormRep","Pct_NoiseRep","PctSemNoiseRep","PctSemNormRep")%>%
   filter(complete.cases(Pct_NormRep,Pct_NoiseRep,PctSemNoiseRep,PctSemNormRep))%>%
@@ -150,7 +178,9 @@ Fig2_table %>%
   facet_wrap(~Group)
   
 ```
-
+<span><font color="ff1493">
+### Recalculating the values for percentage of semantic error and using that for replicating fig 1 and fig 2. The figues still do not resemble with what is in the paper. 
+</span>
 ```{r}
 Fig_table <- allDataPatientStudyDS %>%
   group_by(Group)%>%
@@ -182,6 +212,14 @@ Fig2 <- Fig_table  %>%
   facet_wrap(~Group)
 Fig2
 ```
+<span><font color="ff1493">
+# Table 11: Regression analysis of Parkinson's disease measures
+Simple linear refressions were run for task performances as explained by Parkinson's disease measures. Duration of PD, Medication and H_Y score were used as disease measures. 
+
+Since there are a few NA vales for H-Y variales, we used only the complete case of H_Y for our analysis. Table 11 reports just the significant findings. 
+
+
+
 ```{r}
 Regression_table <- tidied_dataset %>%
   filter(Group == "PD",complete.cases(H_Y) )
